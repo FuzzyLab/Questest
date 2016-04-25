@@ -28,30 +28,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 
-import org.apache.http.ExceptionLogger;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -64,10 +50,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "sharma.vikashkr@gmail.com:jurassic", "bar@example.com:world"
-    };
-
     private UserLoginTask mAuthTask = null;
 
     private AutoCompleteTextView mEmailView;
@@ -75,11 +57,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private TextView responseView;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +86,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        responseView = (TextView) findViewById(R.id.responseView);
     }
 
     private void populateAutoComplete() {
@@ -269,7 +245,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
-    public class UserLoginTask extends AsyncTask<Void, Void, JSONObject> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Response> {
 
         private final String mEmail;
         private final String mPassword;
@@ -280,51 +256,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected JSONObject doInBackground(Void... params) {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(getString(R.string.questest_home) + "/api/login");
+        protected Response doInBackground(Void... params) {
+            RestConnection rest = new RestConnection();
+            Map<String, String> postMap = new HashMap<String, String>();
+            postMap.put("email", mEmail);
+            postMap.put("password", mPassword);
+            postMap.put("ClientType", "android");
+            String resp = null;
             try {
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("email", mEmail));
-                nameValuePairs.add(new BasicNameValuePair("password", mPassword));
-                nameValuePairs.add(new BasicNameValuePair("clientType", "android"));
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                HttpResponse response = httpclient.execute(httppost);
-                InputStream is = response.getEntity().getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                try {
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                JSONObject result = new JSONObject(sb.toString());
+                resp =  rest.sendPost(getString(R.string.questest_home) + "/api/login", postMap);
             } catch (Exception e) {
                 return null;
             }
-            return null;
+            return new Gson().fromJson(resp, Response.class);
         }
 
         @Override
-        protected void onPostExecute(final JSONObject response) {
-            mPasswordView.setError(new Gson().toJson(response));
+        protected void onPostExecute(final Response response) {
             mAuthTask = null;
             showProgress(false);
             int respCode;
             String respMsg = "";
             try {
-                respCode = (int) response.get("respCode");
-                respMsg = (String) response.get("respMsg");
-            } catch(Exception ex) {
+                respCode = response.getRespCode();
+                respMsg = response.getRespMsg();
+            } catch (Exception ex) {
                 return;
             }
             if (respCode == 0) {
