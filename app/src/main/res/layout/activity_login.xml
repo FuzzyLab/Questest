@@ -72,6 +72,13 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/responseView"
+                android:text="respose"
+                android:textSize="24dp" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
