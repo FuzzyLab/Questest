@@ -13,6 +13,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <!--<string name="questest_home">http://questest-fuzzyinsurance.rhcloud.com</string>-->
-    <string name="questest_home">http://localhost:8080</string>
+    <string name="questest_home">http://questest-fuzzyinsurance.rhcloud.com</string>
 </resources>
