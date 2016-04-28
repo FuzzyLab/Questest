@@ -1,4 +1,4 @@
-package com.fuzzy.questest.questest;
+package com.fuzzy.questest;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         boolean cancel = false;
         View focusView = null;
 
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -265,15 +265,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
             int respCode;
             String respMsg = "";
+            String userId = "";
             try {
                 respCode = response.getRespCode();
                 respMsg = response.getRespMsg();
+                userId = response.getUser().getClientType();
             } catch (Exception ex) {
                 return;
             }
             if (respCode == 0) {
-                mPasswordView.setError(respMsg);
-                mPasswordView.requestFocus();
+                mEmailView.setError(userId);
+                mEmailView.requestFocus();
             } else {
                 mPasswordView.requestFocus();
             }

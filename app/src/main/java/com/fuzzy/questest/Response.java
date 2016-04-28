@@ -1,19 +1,10 @@
-package com.fuzzy.questest.questest;
+package com.fuzzy.questest;
 
 public class Response {
     private int respCode;
     private String respMsg;
+    private User user;
     private Object data;
-
-    public Response() {
-    }
-
-    public Response(int respCode, String respMsg, Object data) {
-        super();
-        this.respCode = respCode;
-        this.respMsg = respMsg;
-        this.data = data;
-    }
 
     public void setRespCode(int respCode) {
         this.respCode = respCode;
@@ -37,5 +28,13 @@ public class Response {
 
     public Object getData() {
         return data;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

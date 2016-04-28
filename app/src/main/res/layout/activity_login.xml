@@ -23,7 +23,7 @@
                 android:layout_marginBottom="24dp"
                 android:layout_gravity="center_horizontal"
                 android:text="Welcome!"
-                android:textSize="35dp"/>
+                android:textSize="40dp"/>
 
             <ProgressBar
                 android:id="@+id/login_progress"
@@ -42,8 +42,9 @@
                 android:layout_marginBottom="8dp">
                 <AutoCompleteTextView android:id="@+id/email"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:inputType="textEmailAddress"
+                    android:textSize="24dp"
                     android:hint="Email" />
             </android.support.design.widget.TextInputLayout>
 
@@ -55,18 +56,20 @@
                 android:layout_marginBottom="8dp">
                 <EditText android:id="@+id/password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:inputType="textPassword"
+                    android:textSize="24dp"
                     android:hint="@string/prompt_password"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_login"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:padding="12dp"
+                android:textSize="20dp"
                 android:text="Login / Signup"/>
 
         </LinearLayout>

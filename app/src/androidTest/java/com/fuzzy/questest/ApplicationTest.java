@@ -1,4 +1,4 @@
-package com.fuzzy.questest.questest;
+package com.fuzzy.questest;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
