@@ -3,6 +3,7 @@ package com.fuzzy.questest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -120,27 +121,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (mAuthTask != null) {
             return;
         }
-
         mEmailView.setError(null);
         mPasswordView.setError(null);
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
+        String email = mEmailView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
         boolean cancel = false;
         View focusView = null;
-
-        if (TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
+        if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
             cancel = true;
         }
         if (cancel) {
@@ -265,19 +258,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
             int respCode;
             String respMsg = "";
-            String userId = "";
             try {
                 respCode = response.getRespCode();
                 respMsg = response.getRespMsg();
-                userId = response.getUser().getClientType();
             } catch (Exception ex) {
                 return;
             }
             if (respCode == 0) {
-                mEmailView.setError(userId);
+                mEmailView.setError(respMsg);
                 mEmailView.requestFocus();
+                /*Intent intent = new Intent(getApplication(), MainActivity.class);
+                startActivity(intent);*/
             } else {
-                mPasswordView.requestFocus();
+                if(respMsg.contains("Email")) {
+                    mEmailView.setError(respMsg);
+                    mEmailView.requestFocus();
+                } else {
+                    mPasswordView.setError(respMsg);
+                    mPasswordView.requestFocus();
+                    mPasswordView.setText("");
+                }
             }
         }
 
