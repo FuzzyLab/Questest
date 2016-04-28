@@ -44,7 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:inputType="textEmailAddress"
-                    android:textSize="24dp"
+                    android:textSize="22dp"
                     android:hint="Email" />
             </android.support.design.widget.TextInputLayout>
 
@@ -58,11 +58,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:inputType="textPassword"
-                    android:textSize="24dp"
+                    android:textSize="22dp"
                     android:hint="@string/prompt_password"/>
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/btn_login"
                 android:layout_width="fill_parent"
                 android:layout_height="60dp"

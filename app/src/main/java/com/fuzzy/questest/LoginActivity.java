@@ -19,21 +19,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +53,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private TextView responseView;
 
+    private static QuestestDB questestDB = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        questestDB = new QuestestDB(getApplicationContext());
     }
 
     private void populateAutoComplete() {
@@ -265,10 +262,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return;
             }
             if (respCode == 0) {
-                mEmailView.setError(respMsg);
-                mEmailView.requestFocus();
-                /*Intent intent = new Intent(getApplication(), MainActivity.class);
-                startActivity(intent);*/
+                questestDB.open();
+                questestDB.createEntry(response.getUser());
+                questestDB.close();
+                Intent intent = new Intent(getApplication(), MainActivity.class);
+                startActivity(intent);
+                finish();
             } else {
                 if(respMsg.contains("Email")) {
                     mEmailView.setError(respMsg);
