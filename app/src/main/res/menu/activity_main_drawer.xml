@@ -3,21 +3,25 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_english"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:title="English" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_aptitude"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="Aptitude" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_gk"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:title="General Knowledge" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_computer"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Computer" />
+        <item
+            android:id="@+id/nav_reasoning"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Reasoning" />
     </group>
 
     <item android:title="Communicate">
@@ -27,9 +31,9 @@
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_rate"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Rate" />
         </menu>
     </item>
 
