@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 public class QuestestDB {
         public static final String KEY_ROWID = "_id";
@@ -69,9 +70,9 @@ public class QuestestDB {
             cv.put(ID, user.getId());
             cv.put(EMAIL, user.getEmail());
             cv.put(SIGNATURE, user.getSignature());
-            cv.put(NAME, user.getName());
-            cv.put(AGE,user.getAge());
-            cv.put(SEX, user.getSex());
+            cv.put(NAME, TextUtils.isEmpty(user.getName())?"":user.getName());
+            cv.put(AGE,TextUtils.isEmpty(user.getAge())?"":user.getAge());
+            cv.put(SEX, TextUtils.isEmpty(user.getSex())?"":user.getSex());
             return ourDatabase.insert(USER_TABLE, null, cv);
         }
 

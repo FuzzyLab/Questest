@@ -263,11 +263,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
             if (respCode == 0) {
                 questestDB.open();
-                questestDB.createEntry(response.getUser());
+                long row = questestDB.createEntry(response.getUser());
                 questestDB.close();
-                Intent intent = new Intent(getApplication(), MainActivity.class);
-                startActivity(intent);
-                finish();
+                if(row > -1) {
+                    Intent intent = new Intent(getApplication(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             } else {
                 if(respMsg.contains("Email")) {
                     mEmailView.setError(respMsg);
