@@ -49,9 +49,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
     private View mLoginFormView;
-    private TextView responseView;
 
     private static QuestestDB questestDB = null;
 
@@ -71,7 +69,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
         questestDB = new QuestestDB(getApplicationContext());
     }
 
@@ -163,17 +160,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
         } else {
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
@@ -253,13 +240,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Response response) {
             mAuthTask = null;
             showProgress(false);
-            int respCode;
+            int respCode = 1;
             String respMsg = "";
             try {
                 respCode = response.getRespCode();
                 respMsg = response.getRespMsg();
             } catch (Exception ex) {
-                return;
+                Snackbar.make(mLoginFormView, ex.getMessage(), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                mPasswordView.setText("");
+                mPasswordView.requestFocus();
             }
             if (respCode == 0) {
                 questestDB.open();
@@ -269,16 +259,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Intent intent = new Intent(getApplication(), MainActivity.class);
                     startActivity(intent);
                     finish();
+                } else {
+                    Snackbar.make(mLoginFormView, "DB Connection Error", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    mPasswordView.setText("");
+                    mPasswordView.requestFocus();
                 }
             } else {
-                if(respMsg.contains("Email")) {
-                    mEmailView.setError(respMsg);
-                    mEmailView.requestFocus();
-                } else {
-                    mPasswordView.setError(respMsg);
-                    mPasswordView.requestFocus();
-                    mPasswordView.setText("");
-                }
+                Snackbar.make(mLoginFormView, respMsg, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                mPasswordView.setText("");
+                mPasswordView.requestFocus();
             }
         }
 
