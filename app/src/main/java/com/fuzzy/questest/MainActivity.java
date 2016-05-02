@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewStub;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.google.gson.Gson;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity
     private static User user;
     private static ViewFlipper contentFlipper;
 
-    private static GetQuestionTask getQuestionTask;
+    private static GetQuestionTask getQuestionTask = null;
     private static TextView questionView;
 
     @Override
@@ -66,8 +67,6 @@ public class MainActivity extends AppCompatActivity
         questestDB.open();
         user = questestDB.getUser();
         questestDB.close();
-
-        getQuestionTask = new GetQuestionTask();
     }
 
     @Override
@@ -136,7 +135,11 @@ public class MainActivity extends AppCompatActivity
         Question question = new Question();
         question.setSubject(subject);
         request.setQuestion(question);
-        getQuestionTask.execute(request);
+        String requestStr = new Gson().toJson(request);
+        if(getQuestionTask == null) {
+            getQuestionTask = new GetQuestionTask();
+            getQuestionTask.execute(request);
+        }
     }
 
     public class GetQuestionTask extends AsyncTask<GetQuestionRequest, Void, Response> {
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity
             GetQuestionRequest request = params[0];
             String resp = null;
             try {
-                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/getquestion", (new Gson().toJson(request)));
+                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/getquestion", new Gson().toJson(request));
             } catch (Exception e) {
                 return null;
             }
@@ -156,6 +159,9 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(final Response response) {
+            getQuestionTask = null;
+            questionView.setText("Hello");
+            Toast.makeText(MainActivity.this, new Gson().toJson(response), Toast.LENGTH_LONG).show();
             int respCode;
             String respMsg = "";
             try {

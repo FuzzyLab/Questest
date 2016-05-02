@@ -49,6 +49,8 @@ public class RestConnection {
 			httpConnection.setReadTimeout(readTimeout);
 			httpConnection.setRequestProperty("Content-Type", String
 					.format("application/json"));
+			httpConnection.setRequestProperty("Accept", String
+					.format("application/json"));
 			OutputStream output = null;
 			try {
 				output = httpConnection.getOutputStream();
