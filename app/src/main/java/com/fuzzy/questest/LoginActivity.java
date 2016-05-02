@@ -242,7 +242,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             postMap.put("ClientType", "android");
             String resp = null;
             try {
-                resp =  rest.sendPost(getString(R.string.questest_home) + "/api/login", postMap);
+                resp =  rest.sendPostForm(getString(R.string.questest_home) + "/api/login", postMap);
             } catch (Exception e) {
                 return null;
             }

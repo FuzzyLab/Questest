@@ -25,22 +25,46 @@ public class RestConnection {
 	private static final int connectTimeout = 180000;
 	private static final int readTimeout = 180000;
 
-	private String createRestConnection(URL url, String data)
+	public String sendPostForm(String url, Map<String, String> data)
 			throws IOException {
-		if (url != null
-				&& (url.toString().startsWith("https") || url.toString()
-						.startsWith("HTTPS")))
-			return createHttpsConnection(url, data);
-		else
-			return createHttpConnection(url, data);
+		return createHttpConnectionForm(new URL(url), createURLParams(data));
 	}
 
-	public String sendPost(String url, Map<String, String> data)
+	public String sendPostJson(String url, String data)
 			throws IOException {
-		return createRestConnection(new URL(url), createURLParams(data));
+		return createHttpConnectionJson(new URL(url), data);
 	}
 
-	private String createHttpConnection(URL url, String data)
+	private String createHttpConnectionJson(URL url, String data)
+			throws IOException {
+		try {
+			HttpURLConnection httpConnection = (HttpURLConnection) url
+					.openConnection();
+			httpConnection.setRequestMethod("POST");
+			httpConnection.setUseCaches(false);
+			httpConnection.setDoInput(true);
+			httpConnection.setDoOutput(true);
+			httpConnection.setAllowUserInteraction(false);
+			httpConnection.setConnectTimeout(connectTimeout);
+			httpConnection.setReadTimeout(readTimeout);
+			httpConnection.setRequestProperty("Content-Type", String
+					.format("application/json"));
+			OutputStream output = null;
+			try {
+				output = httpConnection.getOutputStream();
+				output.write(data.getBytes("UTF-8"));
+			} finally {
+				if (output != null)
+					output.close();
+			}
+			String rBody = getResponseBody(httpConnection.getInputStream());
+			return rBody;
+		} catch (IOException e) {
+		}
+		return null;
+	}
+
+	private String createHttpConnectionForm(URL url, String data)
 			throws IOException {
 		try {
 			HttpURLConnection httpConnection = (HttpURLConnection) url
@@ -63,39 +87,6 @@ public class RestConnection {
 					output.close();
 			}
 			String rBody = getResponseBody(httpConnection.getInputStream());
-			return rBody;
-		} catch (IOException e) {
-		}
-		return null;
-	}
-
-	private String createHttpsConnection(URL url, String data) {
-		try {
-			HttpsURLConnection httpsConnection = (HttpsURLConnection) url
-					.openConnection();
-			httpsConnection.setRequestMethod("POST");
-			httpsConnection.setUseCaches(false);
-			httpsConnection.setDoInput(true);
-			httpsConnection.setDoOutput(true);
-			httpsConnection.setAllowUserInteraction(false);
-			httpsConnection.setConnectTimeout(connectTimeout);
-			httpsConnection.setReadTimeout(readTimeout);
-			httpsConnection.setHostnameVerifier(new HostnameVerifier() {
-				public boolean verify(String hostname, SSLSession session) {
-					return true;
-				}
-			});
-			httpsConnection.setRequestProperty("Content-Type", String
-					.format("application/x-www-form-urlencoded;charset=UTF-8"));
-			OutputStream output = null;
-			try {
-				output = httpsConnection.getOutputStream();
-				output.write(data.getBytes("UTF-8"));
-			} finally {
-				if (output != null)
-					output.close();
-			}
-			String rBody = getResponseBody(httpsConnection.getInputStream());
 			return rBody;
 		} catch (IOException e) {
 		}

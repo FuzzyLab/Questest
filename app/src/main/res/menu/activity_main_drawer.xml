@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_english"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="English" />
-        <item
-            android:id="@+id/nav_aptitude"
+            android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Aptitude" />
-        <item
-            android:id="@+id/nav_gk"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="General Knowledge" />
-        <item
-            android:id="@+id/nav_computer"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Computer" />
-        <item
-            android:id="@+id/nav_reasoning"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Reasoning" />
+            android:title="Home">
+        </item>
     </group>
-
+    <item android:title="Subjects">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_english"
+                    android:icon="@drawable/ic_menu_camera"
+                    android:title="English" />
+                <item
+                    android:id="@+id/nav_aptitude"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="Aptitude" />
+                <item
+                    android:id="@+id/nav_gk"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="General Knowledge" />
+                <item
+                    android:id="@+id/nav_computer"
+                    android:icon="@drawable/ic_menu_manage"
+                    android:title="Computer" />
+                <item
+                    android:id="@+id/nav_reasoning"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="Reasoning" />
+            </group>
+        </menu>
+    </item>
     <item android:title="Communicate">
         <menu>
             <item
