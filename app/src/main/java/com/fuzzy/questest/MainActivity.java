@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity
         questestDB.open();
         user = questestDB.getUser();
         questestDB.close();
+        user.setClientType("android");
     }
 
     @Override
@@ -138,19 +139,19 @@ public class MainActivity extends AppCompatActivity
         String requestStr = new Gson().toJson(request);
         if(getQuestionTask == null) {
             getQuestionTask = new GetQuestionTask();
-            getQuestionTask.execute(request);
+            getQuestionTask.execute(requestStr);
         }
     }
 
-    public class GetQuestionTask extends AsyncTask<GetQuestionRequest, Void, Response> {
+    public class GetQuestionTask extends AsyncTask<String, Void, Response> {
 
         @Override
-        protected Response doInBackground(GetQuestionRequest... params) {
+        protected Response doInBackground(String... params) {
             RestConnection rest = new RestConnection();
-            GetQuestionRequest request = params[0];
+            String request = params[0];
             String resp = null;
             try {
-                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/getquestion", new Gson().toJson(request));
+                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/getquestion", request);
             } catch (Exception e) {
                 return null;
             }
@@ -160,19 +161,21 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(final Response response) {
             getQuestionTask = null;
-            questionView.setText("Hello");
-            int respCode;
+            int respCode = 1;
             String respMsg = "";
             try {
                 respCode = response.getRespCode();
                 respMsg = response.getRespMsg();
             } catch (Exception ex) {
-                return;
+                Snackbar.make(contentFlipper, ex.getMessage(), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
             if (respCode == 0) {
                 Question question = (Question) response.getData();
                 questionView.setText(question.getQuestion());
             } else {
+                Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         }
 
