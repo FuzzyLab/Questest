@@ -161,7 +161,6 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(final Response response) {
             getQuestionTask = null;
             questionView.setText("Hello");
-            Toast.makeText(MainActivity.this, new Gson().toJson(response), Toast.LENGTH_LONG).show();
             int respCode;
             String respMsg = "";
             try {
