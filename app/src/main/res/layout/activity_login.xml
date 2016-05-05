@@ -23,31 +23,32 @@
                 android:layout_marginBottom="24dp"
                 android:layout_gravity="center_horizontal"
                 android:text="Welcome!"
-                android:textSize="40dp"/>
+                android:textAppearance="@style/WelcomeLogin"
+                android:textSize="45dp"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
                 <AutoCompleteTextView android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:inputType="textEmailAddress"
-                    android:textSize="20dp"
+                    android:textSize="18dp"
                     android:hint="Email" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
                 <EditText android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:inputType="textPassword"
-                    android:textSize="20dp"
+                    android:textSize="18dp"
                     android:hint="@string/prompt_password"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -57,6 +58,8 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:padding="12dp"
                 android:textSize="20dp"
                 android:text="Login / Signup"/>

@@ -18,17 +18,16 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2">
-            <ScrollView
+            <TextView
+                android:id="@+id/question"
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
-                <TextView
-                    android:id="@+id/question"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp"
-                    android:textSize="20dp"
-                    android:text="Who is the PrimeMinister of India?"/>
-            </ScrollView>
+                android:layout_height="300dp"
+                android:maxLines = "10"
+                android:scrollbars = "vertical"
+                android:padding="5dp"
+                android:textSize="15dp"
+                android:textColor="@color/black"
+                android:text="Question?"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,40 +37,53 @@
             <Button
                 android:id="@+id/option1"
                 android:layout_width="match_parent"
+                android:layout_margin="5dp"
+                android:background="@drawable/bnormal"
+                android:textColor="@color/black"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Mahendra Singh Dhoni"/>
+                android:text="Option1"/>
             <Button
                 android:id="@+id/option2"
                 android:layout_width="match_parent"
+                android:layout_margin="5dp"
+                android:background="@drawable/bnormal"
+                android:textColor="@color/black"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Narendra Modi"/>
+                android:text="Option2"/>
             <Button
                 android:id="@+id/option3"
                 android:layout_width="match_parent"
+                android:layout_margin="5dp"
+                android:background="@drawable/bnormal"
+                android:textColor="@color/black"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Rahul Gandhi"/>
+                android:text="Option3"/>
             <Button
                 android:id="@+id/option4"
                 android:layout_width="match_parent"
+                android:layout_margin="5dp"
+                android:background="@drawable/bnormal"
+                android:textColor="@color/black"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Arvind Kejriwal"/>
+                android:text="Option4"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-            <ScrollView
+            <TextView
+                android:id="@+id/solution"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <TextView
-                    android:id="@+id/solution"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </ScrollView>
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:maxLines = "10"
+                android:text="solution"
+                android:textColor="@color/black"
+                android:scrollbars = "vertical"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

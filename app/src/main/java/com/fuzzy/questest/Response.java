@@ -4,7 +4,7 @@ public class Response {
     private int respCode;
     private String respMsg;
     private User user;
-    private Object data;
+    private Question data;
 
     public void setRespCode(int respCode) {
         this.respCode = respCode;
@@ -14,7 +14,7 @@ public class Response {
         this.respMsg = respMsg;
     }
 
-    public void setData(Object data) {
+    public void setData(Question data) {
         this.data = data;
     }
 
@@ -26,7 +26,7 @@ public class Response {
         return respMsg;
     }
 
-    public Object getData() {
+    public Question getData() {
         return data;
     }
 

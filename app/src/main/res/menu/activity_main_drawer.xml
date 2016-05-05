@@ -3,7 +3,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@mipmap/ic_home"
             android:title="Home">
         </item>
     </group>
@@ -12,23 +12,23 @@
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_english"
-                    android:icon="@drawable/ic_menu_camera"
+                    android:icon="@mipmap/ic_english"
                     android:title="English" />
                 <item
                     android:id="@+id/nav_aptitude"
-                    android:icon="@drawable/ic_menu_gallery"
+                    android:icon="@mipmap/ic_aptitude"
                     android:title="Aptitude" />
                 <item
                     android:id="@+id/nav_gk"
-                    android:icon="@drawable/ic_menu_slideshow"
+                    android:icon="@mipmap/ic_gk"
                     android:title="General Knowledge" />
                 <item
                     android:id="@+id/nav_computer"
-                    android:icon="@drawable/ic_menu_manage"
+                    android:icon="@mipmap/ic_computer"
                     android:title="Computer" />
                 <item
                     android:id="@+id/nav_reasoning"
-                    android:icon="@drawable/ic_menu_gallery"
+                    android:icon="@mipmap/ic_reasoning"
                     android:title="Reasoning" />
             </group>
         </menu>
