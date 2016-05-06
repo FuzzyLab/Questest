@@ -106,6 +106,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(event.isButtonPressed(R.id.option1)) {
+            option1.setBackgroundResource(R.drawable.bpressed);
+        } else {
+            option1.setBackgroundResource(R.drawable.bnormal);
+        }
+
+        if(event.isButtonPressed(R.id.option2)) {
+            option2.setBackgroundResource(R.drawable.bpressed);
+        } else {
+            option2.setBackgroundResource(R.drawable.bnormal);
+        }
+
+        if(event.isButtonPressed(R.id.option3)) {
+            option3.setBackgroundResource(R.drawable.bpressed);
+        } else {
+            option3.setBackgroundResource(R.drawable.bnormal);
+        }
+
+        if(event.isButtonPressed(R.id.option4)) {
+            option4.setBackgroundResource(R.drawable.bpressed);
+        } else {
+            option4.setBackgroundResource(R.drawable.bnormal);
+        }
+        return true;
+    }
+
+    @Override
     public void onClick(View view) {
         userAttempt = new UserAttempt();
         userAttempt.setQuestionId(question.getId());
@@ -176,40 +204,40 @@ public class MainActivity extends AppCompatActivity
             userAttempt = null;
             question = null;
             subject = "ENGLISH";
-            blankScreen();
             fetchSavedQuestions();
+            blankScreen();
             fetchQuestion();
         } else if (id == R.id.nav_aptitude) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "APTITUDE";
-            blankScreen();
             fetchSavedQuestions();
+            blankScreen();
             fetchQuestion();
         } else if (id == R.id.nav_gk) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "GK";
-            blankScreen();
             fetchSavedQuestions();
+            blankScreen();
             fetchQuestion();
         } else if (id == R.id.nav_computer) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "COMPUTER";
-            blankScreen();
             fetchSavedQuestions();
+            blankScreen();
             fetchQuestion();
         } else if (id == R.id.nav_reasoning) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "REASONING";
-            blankScreen();
             fetchSavedQuestions();
+            blankScreen();
             fetchQuestion();
         } else if (id == R.id.nav_share) {
         } else if (id == R.id.nav_rate) {
@@ -353,9 +381,6 @@ public class MainActivity extends AppCompatActivity
                 isDone = set.add(option);
             } while (!isDone);
             setButton(option4, option);
-            if (position > 0) {
-                back.setEnabled(true);
-            }
             if (TextUtils.isEmpty(question.getMarked())) {
                 option1.setEnabled(true);
                 option2.setEnabled(true);
@@ -439,6 +464,10 @@ public class MainActivity extends AppCompatActivity
 
         next = (Button) findViewById(R.id.next);
         back = (Button) findViewById(R.id.back);
+        back.setEnabled(false);
+        if (position > 0) {
+            back.setEnabled(true);
+        }
     }
 
 }
