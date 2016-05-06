@@ -16,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
         questestDB = new QuestestDB(getApplicationContext());
         try {
             questestDB.open();
-            if(questestDB.getCount() > 0) {
+            if(questestDB.getUserCount() > 0) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));

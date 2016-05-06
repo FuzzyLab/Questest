@@ -11,6 +11,7 @@ public class Question {
 	private String optionB;
 	private String optionC;
 	private String solution;
+	private String marked;
 
 	public String getId() {
 		return id;
@@ -82,6 +83,14 @@ public class Question {
 
 	public void setSolution(String solution) {
 		this.solution = solution;
+	}
+
+	public String getMarked() {
+		return marked;
+	}
+
+	public void setMarked(String marked) {
+		this.marked = marked;
 	}
 
 }

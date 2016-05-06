@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -253,7 +252,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
             if (respCode == 0) {
                 questestDB.open();
-                long row = questestDB.createEntry(response.getUser());
+                long row = questestDB.saveUser(response.getUser());
                 questestDB.close();
                 if(row > -1) {
                     Intent intent = new Intent(getApplication(), MainActivity.class);

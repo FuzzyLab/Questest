@@ -22,28 +22,35 @@ import android.widget.ViewFlipper;
 import com.google.gson.Gson;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnTouchListener {
 
-    private static QuestestDB questestDB = null;
-    private static User user;
     private static ViewFlipper contentFlipper;
-
-    private static GetQuestionTask getQuestionTask = null;
     private static TextView questionView;
     private static Button option1;
     private static Button option2;
     private static Button option3;
     private static Button option4;
     private static TextView solutionView;
-
     private static TextView userName;
     private static TextView userEmail;
 
+    private static Button next;
+    private static Button save;
+    private static Button back;
+
+    private static GetQuestionTask getQuestionTask = null;
+    private static QuestestDB questestDB = null;
+    private static User user;
     private static Question question;
+    private static UserAttempt userAttempt;
+    private static String subject = null;
+    private static List<Question> questions;
+    private static int position;
 
     private static Random random = new Random();
     @Override
@@ -100,12 +107,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
+        userAttempt = new UserAttempt();
+        userAttempt.setQuestionId(question.getId());
+        userAttempt.setUserId(user.getId());
+        userAttempt.setSubject(question.getSubject());
         Button button = (Button) view;
+        next.setEnabled(true);
         option1.setEnabled(false);
         option2.setEnabled(false);
         option3.setEnabled(false);
         option4.setEnabled(false);
         String answerSelected = (String) button.getText();
+        userAttempt.setMarked(answerSelected);
+        question.setMarked(answerSelected);
+        questions.add(question);
         int isCorrect = 0;
         if (answerSelected.equals(question.getAnswer())) {
             isCorrect = 1;
@@ -152,31 +167,74 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_home) {
             contentFlipper.setDisplayedChild(0);
+            subject = null;
         } else if (id == R.id.nav_english) {
             contentFlipper.setDisplayedChild(1);
-            fetchQuestion("ENGLISH");
+            userAttempt = null;
+            question = null;
+            subject = "ENGLISH";
+            fetchQuestion();
         } else if (id == R.id.nav_aptitude) {
             contentFlipper.setDisplayedChild(1);
-            fetchQuestion("APTITUDE");
+            userAttempt = null;
+            question = null;
+            subject = "APTITUDE";
+            fetchQuestion();
         } else if (id == R.id.nav_gk) {
             contentFlipper.setDisplayedChild(1);
-            fetchQuestion("GK");
+            userAttempt = null;
+            question = null;
+            subject = "GK";
+            fetchQuestion();
         } else if (id == R.id.nav_computer) {
             contentFlipper.setDisplayedChild(1);
-            fetchQuestion("COMPUTER");
+            userAttempt = null;
+            question = null;
+            subject = "COMPUTER";
+            fetchQuestion();
         } else if (id == R.id.nav_reasoning) {
             contentFlipper.setDisplayedChild(1);
-            fetchQuestion("REASONING");
+            userAttempt = null;
+            question = null;
+            subject = "REASONING";
+            fetchQuestion();
         } else if (id == R.id.nav_share) {
         } else if (id == R.id.nav_rate) {
-
+        }
+        if(subject != null) {
+            questestDB.open();
+            questions = questestDB.getQuestions(subject);
+            questestDB.close();
+            position = questions.size() - 1;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void fetchQuestion(String subject) {
+    public void nextClick(View view) {
+        if(position == questions.size() - 1) {
+            fetchQuestion();
+        } else {
+            position++;
+            question = questions.get(position);
+            setScreen();
+        }
+    }
+
+    public void saveClick(View view) {
+        questestDB.open();
+        questestDB.saveQuestion(question);
+        questestDB.close();
+    }
+
+    public void backClick(View view) {
+        position--;
+        question = questions.get(position);
+        setScreen();
+    }
+
+    private void fetchQuestion() {
         questionView = (TextView) findViewById(R.id.question);
         questionView.setText("");
 
@@ -211,8 +269,11 @@ public class MainActivity extends AppCompatActivity
         solutionView = (TextView) findViewById(R.id.solution);
         solutionView.setText("");
 
+        position++;
+
         GetQuestionRequest request = new GetQuestionRequest();
         request.setUser(user);
+        request.setUserAttempt(userAttempt);
         Question question = new Question();
         question.setSubject(subject);
         request.setQuestion(question);
@@ -275,58 +336,90 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        private void setScreen() {
-            Set<Integer> set = new HashSet<Integer>();
-            boolean isDone = false;
-            questionView.setText(question.getQuestion());
-            questionView.scrollTo(0, 0);
-            int option;
-            do {
-                option = random.nextInt(4);
-                isDone = set.add(option);
-            } while (!isDone);
-            setButton(option1, option);
-            do {
-                option = random.nextInt(4);
-                isDone = set.add(option);
-            } while (!isDone);
-            setButton(option2, option);
-            do {
-                option = random.nextInt(4);
-                isDone = set.add(option);
-            } while (!isDone);
-            setButton(option3, option);
-            do {
-                option = random.nextInt(4);
-                isDone = set.add(option);
-            } while (!isDone);
-            setButton(option4, option);
-
-            option1.setEnabled(true);
-            option2.setEnabled(true);
-            option3.setEnabled(true);
-            option4.setEnabled(true);
-        }
-
-        private void setButton(Button button, int option) {
-            switch (option) {
-                case 0:
-                    button.setText(question.getAnswer());
-                    break;
-                case 1:
-                    button.setText(question.getOptionA());
-                    break;
-                case 2:
-                    button.setText(question.getOptionB());
-                    break;
-                case 3:
-                    button.setText(question.getOptionC());
-                    break;
-            }
-        }
-
         @Override
         protected void onCancelled() {
         }
     }
+
+    private void setScreen() {
+        Set<Integer> set = new HashSet<Integer>();
+        boolean isDone = false;
+        questionView.setText(question.getQuestion());
+        questionView.scrollTo(0, 0);
+        int option;
+        do {
+            option = random.nextInt(4);
+            isDone = set.add(option);
+        } while (!isDone);
+        setButton(option1, option);
+        do {
+            option = random.nextInt(4);
+            isDone = set.add(option);
+        } while (!isDone);
+        setButton(option2, option);
+        do {
+            option = random.nextInt(4);
+            isDone = set.add(option);
+        } while (!isDone);
+        setButton(option3, option);
+        do {
+            option = random.nextInt(4);
+            isDone = set.add(option);
+        } while (!isDone);
+        setButton(option4, option);
+
+        next = (Button) findViewById(R.id.next);
+        save = (Button) findViewById(R.id.save);
+        back = (Button) findViewById(R.id.back);
+        save.setEnabled(false);
+        back.setEnabled(true);
+        if(position == 0) {
+            back.setEnabled(false);
+        }
+
+        if(question.getMarked() == null) {
+            option1.setEnabled(true);
+            option2.setEnabled(true);
+            option3.setEnabled(true);
+            option4.setEnabled(true);
+            next.setEnabled(false);
+        } else {
+            option1.setEnabled(false);
+            option2.setEnabled(false);
+            option3.setEnabled(false);
+            option4.setEnabled(false);
+            next.setEnabled(true);
+        }
+    }
+
+    private void setButton(Button button, int option) {
+        switch (option) {
+            case 0:
+                button.setText(question.getAnswer());
+                if(question.getMarked() != null) {
+                    button.setBackgroundResource(R.drawable.bgreen);
+                    solutionView.setText(question.getSolution());
+                }
+                break;
+            case 1:
+                button.setText(question.getOptionA());
+                if(question.getOptionA().equals(question.getMarked())) {
+                    button.setBackgroundResource(R.drawable.bred);
+                }
+                break;
+            case 2:
+                button.setText(question.getOptionB());
+                if(question.getOptionB().equals(question.getMarked())) {
+                    button.setBackgroundResource(R.drawable.bred);
+                }
+                break;
+            case 3:
+                button.setText(question.getOptionC());
+                if(question.getOptionC().equals(question.getMarked())) {
+                    button.setBackgroundResource(R.drawable.bred);
+                }
+                break;
+        }
+    }
+
 }
