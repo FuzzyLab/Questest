@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity
     private static TextView userEmail;
 
     private static Button next;
-    private static Button save;
     private static Button back;
 
     private static GetQuestionTask getQuestionTask = null;
@@ -120,6 +120,9 @@ public class MainActivity extends AppCompatActivity
         String answerSelected = (String) button.getText();
         userAttempt.setMarked(answerSelected);
         question.setMarked(answerSelected);
+        questestDB.open();
+        questestDB.saveQuestion(question);
+        questestDB.close();
         questions.add(question);
         int isCorrect = 0;
         if (answerSelected.equals(question.getAnswer())) {
@@ -173,39 +176,43 @@ public class MainActivity extends AppCompatActivity
             userAttempt = null;
             question = null;
             subject = "ENGLISH";
+            blankScreen();
+            fetchSavedQuestions();
             fetchQuestion();
         } else if (id == R.id.nav_aptitude) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "APTITUDE";
+            blankScreen();
+            fetchSavedQuestions();
             fetchQuestion();
         } else if (id == R.id.nav_gk) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "GK";
+            blankScreen();
+            fetchSavedQuestions();
             fetchQuestion();
         } else if (id == R.id.nav_computer) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "COMPUTER";
+            blankScreen();
+            fetchSavedQuestions();
             fetchQuestion();
         } else if (id == R.id.nav_reasoning) {
             contentFlipper.setDisplayedChild(1);
             userAttempt = null;
             question = null;
             subject = "REASONING";
+            blankScreen();
+            fetchSavedQuestions();
             fetchQuestion();
         } else if (id == R.id.nav_share) {
         } else if (id == R.id.nav_rate) {
-        }
-        if(subject != null) {
-            questestDB.open();
-            questions = questestDB.getQuestions(subject);
-            questestDB.close();
-            position = questions.size() - 1;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -222,55 +229,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void saveClick(View view) {
-        questestDB.open();
-        questestDB.saveQuestion(question);
-        questestDB.close();
-    }
-
     public void backClick(View view) {
         position--;
         question = questions.get(position);
         setScreen();
     }
 
+    private void fetchSavedQuestions() {
+        if(subject != null) {
+            questestDB.open();
+            questions = questestDB.getQuestions(subject);
+            questestDB.close();
+            position = questions.size() - 1;
+            if(position > -1) {
+                question = questions.get(position);
+                userAttempt = new UserAttempt();
+                userAttempt.setQuestionId(question.getId());
+                userAttempt.setUserId(user.getId());
+                userAttempt.setSubject(question.getSubject());
+                userAttempt.setMarked(question.getMarked());
+            }
+        }
+    }
+
     private void fetchQuestion() {
-        questionView = (TextView) findViewById(R.id.question);
-        questionView.setText("");
-
-        option1 = (Button) findViewById(R.id.option1);
-        option1.setText("");
-        option1.setOnClickListener(this);
-        option1.setBackgroundResource(R.drawable.bnormal);
-        option1.setEnabled(false);
-        option1.setOnTouchListener(this);
-
-        option2 = (Button) findViewById(R.id.option2);
-        option2.setText("");
-        option2.setOnClickListener(this);
-        option2.setBackgroundResource(R.drawable.bnormal);
-        option2.setEnabled(false);
-        option2.setOnTouchListener(this);
-
-        option3 = (Button) findViewById(R.id.option3);
-        option3.setText("");
-        option3.setOnClickListener(this);
-        option3.setBackgroundResource(R.drawable.bnormal);
-        option3.setEnabled(false);
-        option3.setOnTouchListener(this);
-
-        option4 = (Button) findViewById(R.id.option4);
-        option4.setText("");
-        option4.setOnClickListener(this);
-        option4.setBackgroundResource(R.drawable.bnormal);
-        option4.setEnabled(false);
-        option4.setOnTouchListener(this);
-
-        solutionView = (TextView) findViewById(R.id.solution);
-        solutionView.setText("");
-
-        position++;
-
         GetQuestionRequest request = new GetQuestionRequest();
         request.setUser(user);
         request.setUserAttempt(userAttempt);
@@ -279,6 +261,7 @@ public class MainActivity extends AppCompatActivity
         request.setQuestion(question);
         String requestStr = new Gson().toJson(request);
         if(getQuestionTask == null) {
+            position++;
             getQuestionTask = new GetQuestionTask();
             getQuestionTask.execute(requestStr);
         }
@@ -329,11 +312,12 @@ public class MainActivity extends AppCompatActivity
             }
             if (respCode == 0) {
                 question = response.getData();
-                setScreen();
             } else {
+                question = null;
                 Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
+            setScreen();
         }
 
         @Override
@@ -342,53 +326,49 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setScreen() {
-        Set<Integer> set = new HashSet<Integer>();
-        boolean isDone = false;
-        questionView.setText(question.getQuestion());
-        questionView.scrollTo(0, 0);
-        int option;
-        do {
-            option = random.nextInt(4);
-            isDone = set.add(option);
-        } while (!isDone);
-        setButton(option1, option);
-        do {
-            option = random.nextInt(4);
-            isDone = set.add(option);
-        } while (!isDone);
-        setButton(option2, option);
-        do {
-            option = random.nextInt(4);
-            isDone = set.add(option);
-        } while (!isDone);
-        setButton(option3, option);
-        do {
-            option = random.nextInt(4);
-            isDone = set.add(option);
-        } while (!isDone);
-        setButton(option4, option);
-
-        next = (Button) findViewById(R.id.next);
-        save = (Button) findViewById(R.id.save);
-        back = (Button) findViewById(R.id.back);
-        save.setEnabled(false);
-        back.setEnabled(true);
-        if(position == 0) {
-            back.setEnabled(false);
-        }
-
-        if(question.getMarked() == null) {
-            option1.setEnabled(true);
-            option2.setEnabled(true);
-            option3.setEnabled(true);
-            option4.setEnabled(true);
-            next.setEnabled(false);
-        } else {
-            option1.setEnabled(false);
-            option2.setEnabled(false);
-            option3.setEnabled(false);
-            option4.setEnabled(false);
-            next.setEnabled(true);
+        blankScreen();
+        if(question != null) {
+            Set<Integer> set = new HashSet<Integer>();
+            boolean isDone = false;
+            questionView.setText(question.getQuestion());
+            questionView.scrollTo(0, 0);
+            int option;
+            do {
+                option = random.nextInt(4);
+                isDone = set.add(option);
+            } while (!isDone);
+            setButton(option1, option);
+            do {
+                option = random.nextInt(4);
+                isDone = set.add(option);
+            } while (!isDone);
+            setButton(option2, option);
+            do {
+                option = random.nextInt(4);
+                isDone = set.add(option);
+            } while (!isDone);
+            setButton(option3, option);
+            do {
+                option = random.nextInt(4);
+                isDone = set.add(option);
+            } while (!isDone);
+            setButton(option4, option);
+            if (position > 0) {
+                back.setEnabled(true);
+            }
+            if (TextUtils.isEmpty(question.getMarked())) {
+                option1.setEnabled(true);
+                option2.setEnabled(true);
+                option3.setEnabled(true);
+                option4.setEnabled(true);
+                next.setEnabled(false);
+            } else {
+                option1.setEnabled(false);
+                option2.setEnabled(false);
+                option3.setEnabled(false);
+                option4.setEnabled(false);
+                next.setEnabled(true);
+            }
         }
     }
 
@@ -396,7 +376,7 @@ public class MainActivity extends AppCompatActivity
         switch (option) {
             case 0:
                 button.setText(question.getAnswer());
-                if(question.getMarked() != null) {
+                if(!TextUtils.isEmpty(question.getMarked())) {
                     button.setBackgroundResource(R.drawable.bgreen);
                     solutionView.setText(question.getSolution());
                 }
@@ -420,6 +400,45 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
         }
+    }
+
+    private void blankScreen() {
+        questionView = (TextView) findViewById(R.id.question);
+        questionView.setText("");
+
+        option1 = (Button) findViewById(R.id.option1);
+        option1.setText("");
+        option1.setOnClickListener(this);
+        option1.setBackgroundResource(R.drawable.bnormal);
+        option1.setEnabled(false);
+        option1.setOnTouchListener(this);
+
+        option2 = (Button) findViewById(R.id.option2);
+        option2.setText("");
+        option2.setOnClickListener(this);
+        option2.setBackgroundResource(R.drawable.bnormal);
+        option2.setEnabled(false);
+        option2.setOnTouchListener(this);
+
+        option3 = (Button) findViewById(R.id.option3);
+        option3.setText("");
+        option3.setOnClickListener(this);
+        option3.setBackgroundResource(R.drawable.bnormal);
+        option3.setEnabled(false);
+        option3.setOnTouchListener(this);
+
+        option4 = (Button) findViewById(R.id.option4);
+        option4.setText("");
+        option4.setOnClickListener(this);
+        option4.setBackgroundResource(R.drawable.bnormal);
+        option4.setEnabled(false);
+        option4.setOnTouchListener(this);
+
+        solutionView = (TextView) findViewById(R.id.solution);
+        solutionView.setText("");
+
+        next = (Button) findViewById(R.id.next);
+        back = (Button) findViewById(R.id.back);
     }
 
 }

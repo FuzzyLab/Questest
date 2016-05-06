@@ -25,27 +25,17 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textSize="16dp"
+                android:textSize="15dp"
                 android:onClick="backClick"
                 android:enabled="false"
                 android:text="Back"/>
-            <Button
-                android:id="@+id/save"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="16dp"
-                android:onClick="saveClick"
-                android:enabled="false"
-                android:text="Save"/>
             <Button
                 android:id="@+id/next"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textSize="16dp"
+                android:textSize="15dp"
                 android:onClick="nextClick"
                 android:enabled="false"
                 android:text="Next"/>

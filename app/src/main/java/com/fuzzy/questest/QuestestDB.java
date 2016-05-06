@@ -147,7 +147,7 @@ public class QuestestDB {
         Cursor c = ourDatabase.query(QUESTION_TABLE, columns, SUBJECT+" like ?", new String[]{subject}, null,
                 null, null);
         List<Question> questions = new ArrayList<Question>();
-        c.moveToFirst();
+        c.moveToNext();
         while(!c.isAfterLast()) {
             Question question = new Question();
             question.setId(c.getString(1));
