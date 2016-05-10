@@ -38,7 +38,8 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="60dp"
         android:layout_marginRight="16dp"
-        android:translationZ="10dp"
+        android:foregroundGravity="fill"
+        android:translationZ="20dp"
         android:background="@color/primary_darker"
         android:src="@mipmap/ic_add_black" />
 

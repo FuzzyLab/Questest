@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnTouchListener {
 
     private static ViewFlipper contentFlipper;
+    private static TextView questionNo;
     private static TextView questionView;
     private static Button option1;
     private static Button option2;
@@ -335,7 +336,7 @@ public class MainActivity extends AppCompatActivity
                 respCode = response.getRespCode();
                 respMsg = response.getRespMsg();
             } catch (Exception ex) {
-                Snackbar.make(contentFlipper, ex.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(contentFlipper, "Internet Connection Error", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
             if (respCode == 0) {
@@ -356,6 +357,7 @@ public class MainActivity extends AppCompatActivity
     private void setScreen() {
         blankScreen();
         if(question != null) {
+            questionNo.setText("Question# " + position+1);
             Set<Integer> set = new HashSet<Integer>();
             boolean isDone = false;
             questionView.setText(question.getQuestion());
@@ -428,6 +430,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void blankScreen() {
+        questionNo = (TextView) findViewById(R.id.questionNo);
+        questionNo.setText("Question#");
+
         questionView = (TextView) findViewById(R.id.question);
         questionView.setText("");
 
@@ -463,6 +468,7 @@ public class MainActivity extends AppCompatActivity
         solutionView.setText("");
 
         next = (Button) findViewById(R.id.next);
+        next.setEnabled(false);
         back = (Button) findViewById(R.id.back);
         back.setEnabled(false);
         if (position > 0) {

@@ -245,7 +245,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 respCode = response.getRespCode();
                 respMsg = response.getRespMsg();
             } catch (Exception ex) {
-                Snackbar.make(mLoginFormView, ex.getMessage(), Snackbar.LENGTH_LONG)
+                Snackbar.make(mLoginFormView, "Internet Connection Error", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 mPasswordView.setText("");
                 mPasswordView.requestFocus();
