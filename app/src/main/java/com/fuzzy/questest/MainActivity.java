@@ -1,11 +1,14 @@
 package com.fuzzy.questest;
 
+/*import android.app.AlertDialog;
+import android.content.DialogInterface;*/
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,9 +20,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 
 import java.util.HashSet;
@@ -40,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private static TextView solutionView;
     private static TextView userName;
     private static TextView userEmail;
+    private static Spinner subjectSpinner;
 
     private static Button next;
     private static Button back;
@@ -69,8 +77,38 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Add New Question", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Add New Question", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.add_question_dialog, null));
+                final AlertDialog ad = builder.create();
+                ad.setTitle("Add a Question");
+                ad.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                ad.setButton(AlertDialog.BUTTON_POSITIVE, "Add",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                boolean diditwork = true;
+                                EditText question = (EditText) ad
+                                        .findViewById(R.id.post_question);
+                                EditText answer = (EditText) ad
+                                        .findViewById(R.id.post_answer);
+                                EditText optionA = (EditText) ad
+                                        .findViewById(R.id.post_optionA);
+                                EditText optionB = (EditText) ad
+                                        .findViewById(R.id.post_optionB);
+                                EditText optionC = (EditText) ad
+                                        .findViewById(R.id.post_optionC);
+                                EditText solution = (EditText) ad
+                                        .findViewById(R.id.post_solution);
+                            }
+                        });
+                ad.show();*/
             }
         });
 
@@ -94,6 +132,10 @@ public class MainActivity extends AppCompatActivity
         userEmail = (TextView) headerView.findViewById(R.id.user_email);
         userName.setText("".equals(user.getName())?"User":user.getName());
         userEmail.setText(user.getEmail());
+
+        AdView mAdView = (AdView) findViewById(R.id.adQuestest);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
@@ -357,7 +399,7 @@ public class MainActivity extends AppCompatActivity
     private void setScreen() {
         blankScreen();
         if(question != null) {
-            questionNo.setText("Question# " + position+1);
+            questionNo.setText("Question# " + (position+1));
             Set<Integer> set = new HashSet<Integer>();
             boolean isDone = false;
             questionView.setText(question.getQuestion());
