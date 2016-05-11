@@ -1,12 +1,13 @@
 package com.fuzzy.questest;
 
-/*import android.app.AlertDialog;
-import android.content.DialogInterface;*/
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -29,6 +31,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -79,7 +83,8 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 /*Snackbar.make(view, "Add New Question", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                /*AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                ContextThemeWrapper themedContext = new ContextThemeWrapper( MainActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar );
+                AlertDialog.Builder builder = new AlertDialog.Builder(themedContext);
                 LayoutInflater inflater = getLayoutInflater();
                 builder.setView(inflater.inflate(R.layout.add_question_dialog, null));
                 final AlertDialog ad = builder.create();
@@ -108,7 +113,14 @@ public class MainActivity extends AppCompatActivity
                                         .findViewById(R.id.post_solution);
                             }
                         });
-                ad.show();*/
+                ad.show();
+                subjectSpinner = (Spinner) ad.findViewById(R.id.post_subject);
+                String[] regionsArray = getResources().getStringArray(R.array.subjects);
+                ArrayList<String> regions = new ArrayList<String>(Arrays.asList(regionsArray));
+                ArrayAdapter spinnerAdapter = new ArrayAdapter(getApplicationContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        regions);
+                subjectSpinner.setAdapter(spinnerAdapter);
             }
         });
 
