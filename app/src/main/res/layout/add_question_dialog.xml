@@ -7,14 +7,16 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/primary">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
+                android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/quizborders">
                 <Spinner
@@ -30,8 +32,7 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_height="170dp"
                 android:background="@drawable/quizborders">
                 <EditText
                     android:id="@+id/post_question"
@@ -45,8 +46,7 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_height="180dp"
                 android:layout_marginTop="5dp"
                 android:orientation="vertical">
                 <EditText
@@ -104,8 +104,7 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="100dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/quizborders">
                 <EditText
@@ -119,4 +118,5 @@
                     android:textColor="@color/black"/>
             </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

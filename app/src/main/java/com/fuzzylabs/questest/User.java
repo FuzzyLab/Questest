@@ -1,4 +1,4 @@
-package com.fuzzy.questest;
+package com.fuzzylabs.questest;
 
 /**
  * Created by VikashK on 28-04-2016.

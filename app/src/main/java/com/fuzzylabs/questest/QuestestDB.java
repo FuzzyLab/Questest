@@ -1,4 +1,4 @@
-package com.fuzzy.questest;
+package com.fuzzylabs.questest;
 
 import android.content.ContentValues;
 import android.content.Context;

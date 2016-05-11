@@ -1,4 +1,4 @@
-package com.fuzzy.questest;
+package com.fuzzylabs.questest;
 
 public class Question {
 

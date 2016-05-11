@@ -1,18 +1,9 @@
 package com.fuzzylabs.questest;
 
-public class GetQuestionRequest {
+public class PostQuestionRequest {
 
-	private UserAttempt userAttempt;
 	private Question question;
 	private User user;
-
-	public UserAttempt getUserAttempt() {
-		return userAttempt;
-	}
-
-	public void setUserAttempt(UserAttempt userAttempt) {
-		this.userAttempt = userAttempt;
-	}
 
 	public Question getQuestion() {
 		return question;

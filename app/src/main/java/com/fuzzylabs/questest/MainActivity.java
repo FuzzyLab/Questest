@@ -1,4 +1,4 @@
-package com.fuzzy.questest;
+package com.fuzzylabs.questest;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -52,11 +55,13 @@ public class MainActivity extends AppCompatActivity
     private static TextView userName;
     private static TextView userEmail;
     private static Spinner subjectSpinner;
+    private static ScrollView scrollView;
 
     private static Button next;
     private static Button back;
 
     private static GetQuestionTask getQuestionTask = null;
+    private static PostQuestionTask postQuestionTask = null;
     private static QuestestDB questestDB = null;
     private static User user;
     private static Question question;
@@ -77,53 +82,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*Snackbar.make(view, "Add New Question", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                ContextThemeWrapper themedContext = new ContextThemeWrapper( MainActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar );
-                AlertDialog.Builder builder = new AlertDialog.Builder(themedContext);
-                LayoutInflater inflater = getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.add_question_dialog, null));
-                final AlertDialog ad = builder.create();
-                ad.setTitle("Add a Question");
-                ad.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                ad.setButton(AlertDialog.BUTTON_POSITIVE, "Add",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                boolean diditwork = true;
-                                EditText question = (EditText) ad
-                                        .findViewById(R.id.post_question);
-                                EditText answer = (EditText) ad
-                                        .findViewById(R.id.post_answer);
-                                EditText optionA = (EditText) ad
-                                        .findViewById(R.id.post_optionA);
-                                EditText optionB = (EditText) ad
-                                        .findViewById(R.id.post_optionB);
-                                EditText optionC = (EditText) ad
-                                        .findViewById(R.id.post_optionC);
-                                EditText solution = (EditText) ad
-                                        .findViewById(R.id.post_solution);
-                            }
-                        });
-                ad.show();
-                subjectSpinner = (Spinner) ad.findViewById(R.id.post_subject);
-                String[] regionsArray = getResources().getStringArray(R.array.subjects);
-                ArrayList<String> regions = new ArrayList<String>(Arrays.asList(regionsArray));
-                ArrayAdapter spinnerAdapter = new ArrayAdapter(getApplicationContext(),
-                        android.R.layout.simple_spinner_dropdown_item,
-                        regions);
-                subjectSpinner.setAdapter(spinnerAdapter);
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -132,6 +90,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        setTitle("Questest");
 
         questestDB = new QuestestDB(getApplicationContext());
         questestDB.open();
@@ -148,6 +107,95 @@ public class MainActivity extends AppCompatActivity
         AdView mAdView = (AdView) findViewById(R.id.adQuestest);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ContextThemeWrapper themedContext = new ContextThemeWrapper( MainActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar );
+                AlertDialog.Builder builder = new AlertDialog.Builder(themedContext);
+                LayoutInflater inflater = getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.add_question_dialog, null));
+                final AlertDialog ad = builder.create();
+                ad.setTitle("Add a Question");
+                ad.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                ad.setButton(AlertDialog.BUTTON_POSITIVE, "Add",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText postQuestion = (EditText) ad
+                                        .findViewById(R.id.post_question);
+                                boolean allIsWell = true;
+                                String errorMessage = "Error";
+                                if(TextUtils.isEmpty(postQuestion.getText().toString().trim())) {
+                                    errorMessage = "Enter a question";
+                                    allIsWell = false;
+                                }
+                                EditText postAnswer = (EditText) ad
+                                        .findViewById(R.id.post_answer);
+                                if(TextUtils.isEmpty(postAnswer.getText().toString().trim())) {
+                                    errorMessage = "Enter correct answer";
+                                    allIsWell = false;
+                                }
+                                EditText postOptionA = (EditText) ad
+                                        .findViewById(R.id.post_optionA);
+                                if(TextUtils.isEmpty(postOptionA.getText().toString().trim())) {
+                                    errorMessage = "Enter valid option";
+                                    allIsWell = false;
+                                }
+                                EditText postOptionB = (EditText) ad
+                                        .findViewById(R.id.post_optionB);
+                                if(TextUtils.isEmpty(postOptionB.getText().toString().trim())) {
+                                    errorMessage = "Enter valid option";
+                                    allIsWell = false;
+                                }
+                                EditText postOptionC = (EditText) ad
+                                        .findViewById(R.id.post_optionC);
+                                if(TextUtils.isEmpty(postOptionC.getText().toString().trim())) {
+                                    errorMessage = "Enter valid option";
+                                    allIsWell = false;
+                                }
+                                EditText postSolution = (EditText) ad
+                                        .findViewById(R.id.post_solution);
+                                if(allIsWell) {
+                                    Question postQuest = new Question();
+                                    postQuest.setUserId(user.getId());
+                                    postQuest.setQuestion(postQuestion.getText().toString().trim());
+                                    postQuest.setSubject(subjectSpinner.getSelectedItem().toString().trim());
+                                    postQuest.setAnswer(postAnswer.getText().toString().trim());
+                                    postQuest.setOptionA(postOptionA.getText().toString().trim());
+                                    postQuest.setOptionB(postOptionB.getText().toString().trim());
+                                    postQuest.setOptionC(postOptionC.getText().toString().trim());
+                                    postQuest.setSolution(postSolution.getText().toString().trim());
+                                    PostQuestionRequest request = new PostQuestionRequest();
+                                    request.setQuestion(postQuest);
+                                    request.setUser(user);
+                                    if (postQuestionTask == null) {
+                                        String requestStr = new Gson().toJson(request);
+                                        postQuestionTask = new PostQuestionTask();
+                                        postQuestionTask.execute(requestStr);
+                                    }
+                                    dialog.dismiss();
+                                } else {
+                                    Snackbar.make(contentFlipper, errorMessage, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                }
+                            }
+                        });
+                ad.show();
+                subjectSpinner = (Spinner) ad.findViewById(R.id.post_subject);
+                String[] regionsArray = getResources().getStringArray(R.array.subjects);
+                ArrayList<String> regions = new ArrayList<String>(Arrays.asList(regionsArray));
+                ArrayAdapter spinnerAdapter = new ArrayAdapter(getApplicationContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        regions);
+                subjectSpinner.setAdapter(spinnerAdapter);
+            }
+        });
     }
 
     @Override
@@ -158,34 +206,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(event.isButtonPressed(R.id.option1)) {
-            option1.setBackgroundResource(R.drawable.bpressed);
-        } else {
-            option1.setBackgroundResource(R.drawable.bnormal);
-        }
-
-        if(event.isButtonPressed(R.id.option2)) {
-            option2.setBackgroundResource(R.drawable.bpressed);
-        } else {
-            option2.setBackgroundResource(R.drawable.bnormal);
-        }
-
-        if(event.isButtonPressed(R.id.option3)) {
-            option3.setBackgroundResource(R.drawable.bpressed);
-        } else {
-            option3.setBackgroundResource(R.drawable.bnormal);
-        }
-
-        if(event.isButtonPressed(R.id.option4)) {
-            option4.setBackgroundResource(R.drawable.bpressed);
-        } else {
-            option4.setBackgroundResource(R.drawable.bnormal);
-        }
-        return true;
     }
 
     @Override
@@ -254,8 +274,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             contentFlipper.setDisplayedChild(0);
             subject = null;
+            setTitle("Questest");
         } else if (id == R.id.nav_english) {
             contentFlipper.setDisplayedChild(1);
+            setTitle("English");
             userAttempt = null;
             question = null;
             subject = "ENGLISH";
@@ -264,6 +286,7 @@ public class MainActivity extends AppCompatActivity
             fetchQuestion();
         } else if (id == R.id.nav_aptitude) {
             contentFlipper.setDisplayedChild(1);
+            setTitle("Aptitude");
             userAttempt = null;
             question = null;
             subject = "APTITUDE";
@@ -272,6 +295,7 @@ public class MainActivity extends AppCompatActivity
             fetchQuestion();
         } else if (id == R.id.nav_gk) {
             contentFlipper.setDisplayedChild(1);
+            setTitle("GK");
             userAttempt = null;
             question = null;
             subject = "GK";
@@ -280,6 +304,7 @@ public class MainActivity extends AppCompatActivity
             fetchQuestion();
         } else if (id == R.id.nav_computer) {
             contentFlipper.setDisplayedChild(1);
+            setTitle("Computer");
             userAttempt = null;
             question = null;
             subject = "COMPUTER";
@@ -288,9 +313,19 @@ public class MainActivity extends AppCompatActivity
             fetchQuestion();
         } else if (id == R.id.nav_reasoning) {
             contentFlipper.setDisplayedChild(1);
+            setTitle("Reasoning");
             userAttempt = null;
             question = null;
             subject = "REASONING";
+            fetchSavedQuestions();
+            blankScreen();
+            fetchQuestion();
+        } else if (id == R.id.nav_banking) {
+            contentFlipper.setDisplayedChild(1);
+            setTitle("Banking");
+            userAttempt = null;
+            question = null;
+            subject = "BANKING";
             fetchSavedQuestions();
             blankScreen();
             fetchQuestion();
@@ -351,19 +386,43 @@ public class MainActivity extends AppCompatActivity
     }
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                v.setBackgroundResource(R.drawable.bpressed);
-                v.invalidate();
-                break;
-            }
-            case MotionEvent.ACTION_UP: {
-                v.setBackgroundResource(R.drawable.bnormal);
-                v.invalidate();
-                break;
-            }
-        }
         return false;
+    }
+
+    public class PostQuestionTask extends AsyncTask<String, Void, Response> {
+
+        @Override
+        protected Response doInBackground(String... params) {
+            RestConnection rest = new RestConnection();
+            String request = params[0];
+            String resp = null;
+            try {
+                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/postquestion", request);
+            } catch (Exception e) {
+                return null;
+            }
+            return new Gson().fromJson(resp, Response.class);
+        }
+
+        @Override
+        protected void onPostExecute(final Response response) {
+            postQuestionTask = null;
+            int respCode = 1;
+            String respMsg = "";
+            try {
+                respCode = response.getRespCode();
+                respMsg = response.getRespMsg();
+            } catch (Exception ex) {
+                Snackbar.make(contentFlipper, "Internet Connection Error", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+
+        @Override
+        protected void onCancelled() {
+        }
     }
 
     public class GetQuestionTask extends AsyncTask<String, Void, Response> {
@@ -483,7 +542,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return super.onKeyUp(keyCode, event);
+    }
+
     private void blankScreen() {
+        scrollView = (ScrollView) findViewById(R.id.questionScroll);
+
         questionNo = (TextView) findViewById(R.id.questionNo);
         questionNo.setText("Question#");
 
@@ -495,28 +561,24 @@ public class MainActivity extends AppCompatActivity
         option1.setOnClickListener(this);
         option1.setBackgroundResource(R.drawable.bnormal);
         option1.setEnabled(false);
-        option1.setOnTouchListener(this);
 
         option2 = (Button) findViewById(R.id.option2);
         option2.setText("");
         option2.setOnClickListener(this);
         option2.setBackgroundResource(R.drawable.bnormal);
         option2.setEnabled(false);
-        option2.setOnTouchListener(this);
 
         option3 = (Button) findViewById(R.id.option3);
         option3.setText("");
         option3.setOnClickListener(this);
         option3.setBackgroundResource(R.drawable.bnormal);
         option3.setEnabled(false);
-        option3.setOnTouchListener(this);
 
         option4 = (Button) findViewById(R.id.option4);
         option4.setText("");
         option4.setOnClickListener(this);
         option4.setBackgroundResource(R.drawable.bnormal);
         option4.setEnabled(false);
-        option4.setOnTouchListener(this);
 
         solutionView = (TextView) findViewById(R.id.solution);
         solutionView.setText("");
@@ -528,6 +590,21 @@ public class MainActivity extends AppCompatActivity
         if (position > 0) {
             back.setEnabled(true);
         }
+        questionView.setMovementMethod(new ScrollingMovementMethod());
+        scrollView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                questionView.getParent().requestDisallowInterceptTouchEvent(false);
+                return false;
+            }
+        });
+        questionView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                questionView.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
     }
 
 }
