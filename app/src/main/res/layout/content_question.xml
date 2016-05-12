@@ -58,11 +58,24 @@
                     android:text="Next"/>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/progressBarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/question_actions"
+                android:gravity="center_horizontal">
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:visibility="gone"/>
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/question_layout"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:background="@drawable/quizborders"
-                android:layout_below="@id/question_actions">
+                android:layout_below="@id/progressBarView">
                 <TextView
                     android:id="@+id/question"
                     android:layout_width="match_parent"

@@ -9,9 +9,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -24,8 +28,10 @@ public class AccountActivity extends AppCompatActivity {
     private static View accountView;
     private static QuestestDB questestDb;
     private static User user;
+    private static TextView emailId;
     private static EditText nameView;
     private static EditText ageView;
+    private static ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +46,20 @@ public class AccountActivity extends AppCompatActivity {
                 regions);
         sexSpinner.setAdapter(spinnerAdapter);
 
+        AdView mAdView = (AdView) findViewById(R.id.adQuestest);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         questestDb = new QuestestDB(getApplicationContext());
         questestDb.open();
         user = questestDb.getUser();
         questestDb.close();
         user.setClientType("android");
 
+        emailId = (TextView) findViewById(R.id.emailId);
         nameView = (EditText) findViewById(R.id.name);
         ageView = (EditText) findViewById(R.id.age);
+        emailId.setText(user.getEmail());
         nameView.setText(user.getName());
         ageView.setText(user.getAge());
         if("Female".equalsIgnoreCase(user.getSex())) {
@@ -55,7 +67,7 @@ public class AccountActivity extends AppCompatActivity {
         }
     }
 
-    public void cancel(View view) {
+    public void close(View view) {
         onBackPressed();
     }
 
@@ -64,6 +76,8 @@ public class AccountActivity extends AppCompatActivity {
         String age = ageView.getText().toString().trim();
         String sex = sexSpinner.getSelectedItem().toString();
         if(updateUserTask == null && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(age)) {
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
             user.setName(name);
             user.setAge(age);
             user.setSex(sex);
@@ -93,6 +107,7 @@ public class AccountActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Response response) {
+            progressBar.setVisibility(View.GONE);
             updateUserTask = null;
             int respCode = 1;
             String respMsg = "";
@@ -114,6 +129,8 @@ public class AccountActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
+            updateUserTask = null;
+            progressBar.setVisibility(View.GONE);
         }
     }
 }

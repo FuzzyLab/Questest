@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -55,14 +56,13 @@ public class MainActivity extends AppCompatActivity
     private static TextView solutionView;
     private static TextView userName;
     private static TextView userEmail;
-    private static Spinner subjectSpinner;
     private static ScrollView scrollView;
+    private static ProgressBar progressBar;
 
     private static Button next;
     private static Button back;
 
     private static GetQuestionTask getQuestionTask = null;
-    private static PostQuestionTask postQuestionTask = null;
     private static QuestestDB questestDB = null;
     private static User user;
     private static Question question;
@@ -113,88 +113,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContextThemeWrapper themedContext = new ContextThemeWrapper( MainActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar );
-                AlertDialog.Builder builder = new AlertDialog.Builder(themedContext);
-                LayoutInflater inflater = getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.add_question_dialog, null));
-                final AlertDialog ad = builder.create();
-                ad.setTitle("Add a Question");
-                ad.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                ad.setButton(AlertDialog.BUTTON_POSITIVE, "Add",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                EditText postQuestion = (EditText) ad
-                                        .findViewById(R.id.post_question);
-                                boolean allIsWell = true;
-                                String errorMessage = "Error";
-                                if(TextUtils.isEmpty(postQuestion.getText().toString().trim())) {
-                                    errorMessage = "Enter a question";
-                                    allIsWell = false;
-                                }
-                                EditText postAnswer = (EditText) ad
-                                        .findViewById(R.id.post_answer);
-                                if(TextUtils.isEmpty(postAnswer.getText().toString().trim())) {
-                                    errorMessage = "Enter correct answer";
-                                    allIsWell = false;
-                                }
-                                EditText postOptionA = (EditText) ad
-                                        .findViewById(R.id.post_optionA);
-                                if(TextUtils.isEmpty(postOptionA.getText().toString().trim())) {
-                                    errorMessage = "Enter valid option";
-                                    allIsWell = false;
-                                }
-                                EditText postOptionB = (EditText) ad
-                                        .findViewById(R.id.post_optionB);
-                                if(TextUtils.isEmpty(postOptionB.getText().toString().trim())) {
-                                    errorMessage = "Enter valid option";
-                                    allIsWell = false;
-                                }
-                                EditText postOptionC = (EditText) ad
-                                        .findViewById(R.id.post_optionC);
-                                if(TextUtils.isEmpty(postOptionC.getText().toString().trim())) {
-                                    errorMessage = "Enter valid option";
-                                    allIsWell = false;
-                                }
-                                EditText postSolution = (EditText) ad
-                                        .findViewById(R.id.post_solution);
-                                if(allIsWell) {
-                                    Question postQuest = new Question();
-                                    postQuest.setUserId(user.getId());
-                                    postQuest.setQuestion(postQuestion.getText().toString().trim());
-                                    postQuest.setSubject(subjectSpinner.getSelectedItem().toString().trim());
-                                    postQuest.setAnswer(postAnswer.getText().toString().trim());
-                                    postQuest.setOptionA(postOptionA.getText().toString().trim());
-                                    postQuest.setOptionB(postOptionB.getText().toString().trim());
-                                    postQuest.setOptionC(postOptionC.getText().toString().trim());
-                                    postQuest.setSolution(postSolution.getText().toString().trim());
-                                    PostQuestionRequest request = new PostQuestionRequest();
-                                    request.setQuestion(postQuest);
-                                    request.setUser(user);
-                                    if (postQuestionTask == null) {
-                                        String requestStr = new Gson().toJson(request);
-                                        postQuestionTask = new PostQuestionTask();
-                                        postQuestionTask.execute(requestStr);
-                                    }
-                                    dialog.dismiss();
-                                } else {
-                                    Snackbar.make(contentFlipper, errorMessage, Snackbar.LENGTH_LONG)
-                                            .setAction("Action", null).show();
-                                }
-                            }
-                        });
-                ad.show();
-                subjectSpinner = (Spinner) ad.findViewById(R.id.post_subject);
-                String[] regionsArray = getResources().getStringArray(R.array.subjects);
-                ArrayList<String> regions = new ArrayList<String>(Arrays.asList(regionsArray));
-                ArrayAdapter spinnerAdapter = new ArrayAdapter(getApplicationContext(),
-                        android.R.layout.simple_spinner_dropdown_item,
-                        regions);
-                subjectSpinner.setAdapter(spinnerAdapter);
+                Intent intent = new Intent(getApplication(), PostQuestionActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -393,6 +313,8 @@ public class MainActivity extends AppCompatActivity
 
     private void fetchQuestion() {
         if(getQuestionTask == null) {
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
             GetQuestionRequest request = new GetQuestionRequest();
             request.setUser(user);
             request.setUserAttempt(userAttempt);
@@ -408,42 +330,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         return false;
-    }
-
-    public class PostQuestionTask extends AsyncTask<String, Void, Response> {
-
-        @Override
-        protected Response doInBackground(String... params) {
-            RestConnection rest = new RestConnection();
-            String request = params[0];
-            String resp = null;
-            try {
-                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/postquestion", request);
-            } catch (Exception e) {
-                return null;
-            }
-            return new Gson().fromJson(resp, Response.class);
-        }
-
-        @Override
-        protected void onPostExecute(final Response response) {
-            postQuestionTask = null;
-            int respCode = 1;
-            String respMsg = "";
-            try {
-                respCode = response.getRespCode();
-                respMsg = response.getRespMsg();
-            } catch (Exception ex) {
-                Snackbar.make(contentFlipper, "Internet Connection Error", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-            Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        }
-
-        @Override
-        protected void onCancelled() {
-        }
     }
 
     public class GetQuestionTask extends AsyncTask<String, Void, Response> {
@@ -485,6 +371,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onCancelled() {
+            getQuestionTask = null;
         }
     }
 
@@ -531,6 +418,7 @@ public class MainActivity extends AppCompatActivity
                 next.setEnabled(true);
             }
         }
+        progressBar.setVisibility(View.GONE);
     }
 
     private void setButton(Button button, int option) {
