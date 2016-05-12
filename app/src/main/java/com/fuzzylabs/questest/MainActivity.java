@@ -2,6 +2,7 @@ package com.fuzzylabs.questest;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -267,6 +268,11 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void viewAccount(View view) {
+        Snackbar.make(contentFlipper, "View Account", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -330,7 +336,22 @@ public class MainActivity extends AppCompatActivity
             blankScreen();
             fetchQuestion();
         } else if (id == R.id.nav_share) {
+            String thisApp = "https://play.google.com/store/apps/details?id=com.fuzzylabs.questest";
+            String body = "---Questest---\n --Fuzzy Labs--\n "
+                    + "\n\n Download this app: "
+                    + thisApp;
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, body);
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Fuzzy Labs | Questest"));
+            return true;
         } else if (id == R.id.nav_rate) {
+            String url = "https://play.google.com/store/apps/details?id=com.fuzzylabs.questest";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+            return true;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
