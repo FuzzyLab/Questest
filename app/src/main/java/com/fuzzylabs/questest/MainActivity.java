@@ -269,8 +269,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void viewAccount(View view) {
-        Snackbar.make(contentFlipper, "View Account", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        Intent intent = new Intent(getApplication(), AccountActivity.class);
+        startActivity(intent);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -392,14 +392,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void fetchQuestion() {
-        GetQuestionRequest request = new GetQuestionRequest();
-        request.setUser(user);
-        request.setUserAttempt(userAttempt);
-        Question question = new Question();
-        question.setSubject(subject);
-        request.setQuestion(question);
-        String requestStr = new Gson().toJson(request);
         if(getQuestionTask == null) {
+            GetQuestionRequest request = new GetQuestionRequest();
+            request.setUser(user);
+            request.setUserAttempt(userAttempt);
+            Question question = new Question();
+            question.setSubject(subject);
+            request.setQuestion(question);
+            String requestStr = new Gson().toJson(request);
             position++;
             getQuestionTask = new GetQuestionTask();
             getQuestionTask.execute(requestStr);

@@ -54,7 +54,7 @@ public class QuestestDB {
                     + NAME + " TEXT NOT NULL, "
                     + AGE + " TEXT NOT NULL, "
                     + SEX + " TEXT NOT NULL, "
-                    + "UNIQUE (" + ID + ") ON CONFLICT IGNORE);");
+                    + "UNIQUE (" + ID + ") ON CONFLICT REPLACE);");
 
             db.execSQL("CREATE TABLE " + QUESTION_TABLE + " ("
                     + KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
