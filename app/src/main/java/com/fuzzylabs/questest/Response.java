@@ -1,10 +1,12 @@
 package com.fuzzylabs.questest;
 
+import java.util.List;
+
 public class Response {
     private int respCode;
     private String respMsg;
     private User user;
-    private Question data;
+    private List<Question> data;
 
     public void setRespCode(int respCode) {
         this.respCode = respCode;
@@ -14,7 +16,7 @@ public class Response {
         this.respMsg = respMsg;
     }
 
-    public void setData(Question data) {
+    public void setData(List<Question> data) {
         this.data = data;
     }
 
@@ -26,7 +28,7 @@ public class Response {
         return respMsg;
     }
 
-    public Question getData() {
+    public List<Question> getData() {
         return data;
     }
 

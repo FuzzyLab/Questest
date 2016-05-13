@@ -42,6 +42,12 @@
             android:name=".PostQuestionActivity"
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".TestActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".ScoreActivity"
+            android:theme="@style/AppTheme.Dark" />
     </application>
 
 </manifest>

@@ -7,7 +7,7 @@
             android:title="Home">
         </item>
     </group>
-    <item android:title="Subjects">
+    <item android:title="Practice">
         <menu>
             <group android:checkableBehavior="single">
                 <item
