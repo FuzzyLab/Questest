@@ -121,6 +121,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        questestDB = new QuestestDB(getApplicationContext());
+        questestDB.open();
+        user = questestDB.getUser();
+        questestDB.close();
+        user.setClientType("android");
+        userName.setText("".equals(user.getName())?"User":user.getName());
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {

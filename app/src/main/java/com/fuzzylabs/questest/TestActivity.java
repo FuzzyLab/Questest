@@ -104,6 +104,10 @@ public class TestActivity extends AppCompatActivity
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        attempted = 0;
+        correct = 0;
+        incorrect = 0;
+
         fetchTest();
     }
 
@@ -122,6 +126,7 @@ public class TestActivity extends AppCompatActivity
         ad.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        countDownTimer.cancel();
                         dialog.dismiss();
                         Intent intent = new Intent(getApplication(), ScoreActivity.class);
                         intent.putExtra("subject", subject);
