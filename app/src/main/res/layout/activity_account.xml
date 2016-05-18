@@ -152,21 +152,23 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:onClick="close"
                 android:text="Close"
+                android:textColor="@color/black"
                 android:textSize="20dp"/>
             <Button
                 android:id="@+id/save"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:onClick="save"
                 android:text="Save"
+                android:textColor="@color/black"
                 android:textSize="20dp"/>
         </LinearLayout>
     </LinearLayout>

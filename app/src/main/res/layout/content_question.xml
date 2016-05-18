@@ -33,6 +33,7 @@
                     android:onClick="backClick"
                     android:enabled="false"
                     android:drawableLeft="@mipmap/ic_back"
+                    android:textColor="@color/black"
                     android:text="Back"/>
                 <TextView
                     android:id="@+id/questionNo"
@@ -53,6 +54,7 @@
                     android:onClick="nextClick"
                     android:enabled="false"
                     android:drawableRight="@mipmap/ic_next"
+                    android:textColor="@color/black"
                     android:text="Next"/>
             </LinearLayout>
             <LinearLayout

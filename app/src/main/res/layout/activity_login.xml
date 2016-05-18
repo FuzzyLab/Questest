@@ -11,22 +11,19 @@
         android:paddingTop="20dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:background="@mipmap/ic_launcher"/>
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="72dp"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Welcome"
+            android:textSize="55dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="72dp"
             android:layout_gravity="center_horizontal"
-            android:text="Questest"
-            android:textAppearance="@style/WelcomeLogin"
-            android:textSize="45dp"/>
+            android:text="Please login to Questest"
+            android:textSize="20dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,6 +75,12 @@
             android:layout_marginRight="10dp"
             android:padding="12dp"
             android:textSize="18dp"
+            android:textColor="@color/black"
             android:text="Login / Signup"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Forgot password"/>
     </LinearLayout>
 </LinearLayout>

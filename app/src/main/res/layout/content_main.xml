@@ -38,6 +38,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:onClick="takeTest"
                 android:drawableTop="@mipmap/ic_english"
+                android:textColor="@color/black"
                 android:text="ENGLISH"/>
             <Button
                 android:layout_width="0dp"
@@ -47,6 +48,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:onClick="takeTest"
                 android:drawableTop="@mipmap/ic_aptitude"
+                android:textColor="@color/black"
                 android:text="APTITUDE"/>
         </LinearLayout>
         <LinearLayout
@@ -61,6 +63,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:onClick="takeTest"
                 android:drawableTop="@mipmap/ic_gk"
+                android:textColor="@color/black"
                 android:text="GK"/>
             <Button
                 android:layout_width="0dp"
@@ -70,6 +73,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:onClick="takeTest"
                 android:drawableTop="@mipmap/ic_computer"
+                android:textColor="@color/black"
                 android:text="COMPUTER"/>
         </LinearLayout>
         <LinearLayout
@@ -84,6 +88,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:onClick="takeTest"
                 android:drawableTop="@mipmap/ic_reasoning"
+                android:textColor="@color/black"
                 android:text="REASONING"/>
             <Button
                 android:layout_width="0dp"
@@ -93,6 +98,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:onClick="takeTest"
                 android:drawableTop="@mipmap/ic_banking"
+                android:textColor="@color/black"
                 android:text="BANKING"/>
         </LinearLayout>
     </LinearLayout>
