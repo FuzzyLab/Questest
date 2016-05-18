@@ -147,8 +147,8 @@
                 android:gravity="center"
                 android:onClick="close"
                 android:text="Close"
-                android:textColor="@color/black"
-                android:textSize="20dp"/>
+                android:textColor="@drawable/appbutton"
+                android:textSize="16dp"/>
             <Button
                 android:id="@+id/save"
                 android:layout_width="0dp"
@@ -157,8 +157,8 @@
                 android:gravity="center"
                 android:onClick="postQuestion"
                 android:text="Post"
-                android:textColor="@color/black"
-                android:textSize="20dp"/>
+                android:textColor="@drawable/appbutton"
+                android:textSize="16dp"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
