@@ -41,7 +41,7 @@
         <activity
             android:name=".PostQuestionActivity"
             android:theme="@style/AppTheme.Dark"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".TestActivity"
             android:theme="@style/AppTheme.Dark" />
