@@ -16,7 +16,7 @@
             <ImageView
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:background="@mipmap/ic_launcher"/>
+                android:background="@mipmap/questest"/>
         </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
