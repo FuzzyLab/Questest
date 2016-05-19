@@ -37,7 +37,6 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Questest Account"
-                android:textColor="@color/black"
                 android:textSize="35dp"/>
         </LinearLayout>
         <LinearLayout
