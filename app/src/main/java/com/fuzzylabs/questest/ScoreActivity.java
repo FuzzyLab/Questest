@@ -3,6 +3,7 @@ package com.fuzzylabs.questest;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 public class ScoreActivity extends AppCompatActivity {
@@ -32,5 +33,9 @@ public class ScoreActivity extends AppCompatActivity {
         correct.setText(intent.getStringExtra("correct"));
         incorrect.setText(intent.getStringExtra("incorrect"));
         score.setText(intent.getStringExtra("score"));
+    }
+
+    public void close(View view) {
+        onBackPressed();
     }
 }

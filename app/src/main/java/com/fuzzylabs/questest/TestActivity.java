@@ -68,9 +68,9 @@ public class TestActivity extends AppCompatActivity
     private static List<Question> questions;
     private static int position;
     private static Random random = new Random();
-    private static final int testCount = 5;
+    private static final int testCount = 10;
     private CountDownTimer countDownTimer;
-    private final long startTime = testCount * 3 * 1000 * 60;
+    private final long startTime = testCount * 1 * 1000 * 60;
     private final long interval = 1 * 1000;
 
     private static int attempted = 0;

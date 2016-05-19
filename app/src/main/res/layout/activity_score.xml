@@ -18,28 +18,33 @@
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="0dp"
+            android:layout_weight="5"
             android:gravity="center">
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:background="@mipmap/questest"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="Your Score"
+                android:textSize="50dp"/>
         </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="0dp"
+            android:layout_weight="3"
             android:gravity="center">
             <TextView
                 android:id="@+id/subject"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center|top"
                 android:textSize="30dp"
                 android:text="Subject"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="30dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center">
             <TextView
                 android:layout_width="0dp"
@@ -60,7 +65,8 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center">
             <TextView
                 android:layout_width="0dp"
@@ -81,7 +87,8 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center">
             <TextView
                 android:layout_width="0dp"
@@ -102,7 +109,8 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center">
             <TextView
                 android:layout_width="0dp"
@@ -123,7 +131,8 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center">
             <TextView
                 android:layout_width="0dp"
@@ -141,6 +150,24 @@
                 android:gravity="center"
                 android:textSize="16dp"
                 android:text="15"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.7"
+            android:layout_margin="30dp"
+            android:layout_gravity="bottom"
+            android:gravity="center">
+            <Button
+                android:id="@+id/close"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="close"
+                android:textSize="16dp"
+                android:textColor="@color/black"
+                android:text="Close"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
