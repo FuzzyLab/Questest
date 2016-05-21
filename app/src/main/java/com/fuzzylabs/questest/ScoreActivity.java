@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class ScoreActivity extends AppCompatActivity {
 
     private static TextView subject;
@@ -19,6 +22,11 @@ public class ScoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score);
+
+        AdView mAdView = (AdView) findViewById(R.id.adQuestest);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         subject = (TextView) findViewById(R.id.subject);
         totalQuestions = (TextView) findViewById(R.id.totalQuestions);
         attempted = (TextView) findViewById(R.id.attempted);

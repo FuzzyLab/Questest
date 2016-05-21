@@ -52,6 +52,9 @@ public class PostQuestionActivity extends AppCompatActivity {
                 regions);
         subjectSpinner.setAdapter(spinnerAdapter);
 
+        Snackbar.make(postQuestionView, "Post a question", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
         AdView mAdView = (AdView) findViewById(R.id.adQuestest);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnTouchListener {
 
     private static ViewFlipper contentFlipper;
+    private static ViewFlipper solutionFlipper;
     private static TextView questionNo;
     private static TextView questionView;
     private static Button option1;
@@ -61,8 +62,11 @@ public class MainActivity extends AppCompatActivity
 
     private static Button next;
     private static Button back;
+    private static Button postSolutionBtn;
+    private static EditText postSolution;
 
     private static GetQuestionTask getQuestionTask = null;
+    private static PostSolutionTask postSolutionTask = null;
     private static QuestestDB questestDB = null;
     private static User user;
     private static Question question;
@@ -173,7 +177,38 @@ public class MainActivity extends AppCompatActivity
             else if (option4.getText().equals(question.getAnswer()))
                 option4.setBackgroundResource(R.drawable.bgreen);
         }
-        solutionView.setText(question.getSolution());
+        solutionFlipper.setVisibility(View.VISIBLE);
+        if(TextUtils.isEmpty(question.getSolution())) {
+            solutionFlipper.setDisplayedChild(1);
+            postSolution = (EditText) findViewById(R.id.post_solution);
+            postSolutionBtn = (Button) findViewById(R.id.post_solution_btn);
+            postSolutionBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String solution = postSolution.getText().toString().trim();
+                    question.setSolution(solution);
+                    PostQuestionRequest request = new PostQuestionRequest();
+                    request.setQuestion(question);
+                    request.setUser(user);
+                    if(postSolutionTask == null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        String requestStr = new Gson().toJson(request);
+                        postSolutionTask = new PostSolutionTask();
+                        postSolutionTask.execute(requestStr);
+                    }
+                    solutionFlipper.setDisplayedChild(0);
+                    solutionView = (TextView) findViewById(R.id.solution);
+                    solutionView.setText(solution);
+                    questestDB.open();
+                    questestDB.saveQuestion(question);
+                    questestDB.close();
+                }
+            });
+        } else {
+            solutionFlipper.setDisplayedChild(0);
+            solutionView = (TextView) findViewById(R.id.solution);
+            solutionView.setText(question.getSolution());
+        }
     }
 
     @Override
@@ -392,6 +427,45 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public class PostSolutionTask extends AsyncTask<String, Void, Response> {
+
+        @Override
+        protected Response doInBackground(String... params) {
+            RestConnection rest = new RestConnection();
+            String request = params[0];
+            String resp = null;
+            try {
+                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/postquestion", request);
+            } catch (Exception e) {
+                return null;
+            }
+            return new Gson().fromJson(resp, Response.class);
+        }
+
+        @Override
+        protected void onPostExecute(final Response response) {
+            progressBar.setVisibility(View.GONE);
+            postSolutionTask = null;
+            int respCode = 1;
+            String respMsg = "";
+            try {
+                respCode = response.getRespCode();
+                respMsg = response.getRespMsg();
+            } catch (Exception ex) {
+                Snackbar.make(contentFlipper, "Internet Connection Error", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+
+        @Override
+        protected void onCancelled() {
+            postSolutionTask = null;
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
     private void setScreen() {
         blankScreen();
         if(question != null) {
@@ -433,6 +507,38 @@ public class MainActivity extends AppCompatActivity
                 option3.setEnabled(false);
                 option4.setEnabled(false);
                 next.setEnabled(true);
+                solutionFlipper.setVisibility(View.VISIBLE);
+                if(TextUtils.isEmpty(question.getSolution())) {
+                    solutionFlipper.setDisplayedChild(1);
+                    postSolution = (EditText) findViewById(R.id.post_solution);
+                    postSolutionBtn = (Button) findViewById(R.id.post_solution_btn);
+                    postSolutionBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String solution = postSolution.getText().toString().trim();
+                            question.setSolution(solution);
+                            PostQuestionRequest request = new PostQuestionRequest();
+                            request.setQuestion(question);
+                            request.setUser(user);
+                            if(postSolutionTask == null) {
+                                progressBar.setVisibility(View.VISIBLE);
+                                String requestStr = new Gson().toJson(request);
+                                postSolutionTask = new PostSolutionTask();
+                                postSolutionTask.execute(requestStr);
+                            }
+                            solutionFlipper.setDisplayedChild(0);
+                            solutionView = (TextView) findViewById(R.id.solution);
+                            solutionView.setText(solution);
+                            questestDB.open();
+                            questestDB.saveQuestion(question);
+                            questestDB.close();
+                        }
+                    });
+                } else {
+                    solutionFlipper.setDisplayedChild(0);
+                    solutionView = (TextView) findViewById(R.id.solution);
+                    solutionView.setText(question.getSolution());
+                }
             }
         }
         progressBar.setVisibility(View.GONE);
@@ -444,7 +550,6 @@ public class MainActivity extends AppCompatActivity
                 button.setText(question.getAnswer());
                 if(!TextUtils.isEmpty(question.getMarked())) {
                     button.setBackgroundResource(R.drawable.bgreen);
-                    solutionView.setText(question.getSolution());
                 }
                 break;
             case 1:
@@ -506,8 +611,8 @@ public class MainActivity extends AppCompatActivity
         option4.setBackgroundResource(R.drawable.bnormal);
         option4.setEnabled(false);
 
-        solutionView = (TextView) findViewById(R.id.solution);
-        solutionView.setText("");
+        solutionFlipper = (ViewFlipper)findViewById(R.id.solution_flipper);
+        solutionFlipper.setVisibility(View.GONE);
 
         next = (Button) findViewById(R.id.next);
         next.setEnabled(false);

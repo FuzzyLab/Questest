@@ -67,7 +67,7 @@ public class QuestestDB {
                     + OPTIONC + " TEXT NOT NULL, "
                     + SOLUTION + " TEXT NOT NULL, "
                     + MARKED + " TEXT NOT NULL, "
-                    + "UNIQUE (" + ID + ") ON CONFLICT IGNORE);");
+                    + "UNIQUE (" + ID + ") ON CONFLICT REPLACE);");
         }
 
         @Override

@@ -150,21 +150,15 @@
                     android:gravity="left|center_vertical"
                     android:text="Option4"/>
             </LinearLayout>
-            <LinearLayout
+            <ViewFlipper
+                android:id="@+id/solution_flipper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/quizborders"
-                android:layout_below="@id/options_layout">
-                <TextView
-                    android:id="@+id/solution"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="solution"
-                    android:textSize="17dp"
-                    android:textColor="@color/black"/>
-            </LinearLayout>
+                android:layout_below="@id/options_layout"
+                android:layout_marginTop="10dp">
+                <include android:id="@+id/contentMain" layout="@layout/content_solution" />
+                <include android:id="@+id/postSolution" layout="@layout/content_post_solution" />
+            </ViewFlipper>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
