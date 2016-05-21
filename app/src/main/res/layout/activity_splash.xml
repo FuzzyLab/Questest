@@ -31,7 +31,7 @@
             android:gravity="center"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="Practice for your Government Jobs Enterance Exams"
+            android:text="Practice for your Government Jobs entrance exams"
             android:textSize="20dp"
             android:layout_marginTop="20dp"/>
     </LinearLayout>
