@@ -28,7 +28,7 @@
         <item name="colorControlHighlight">@color/white</item>
         <item name="android:textColorHint">@color/oil</item>
 
-        <item name="android:colorButtonNormal">@color/light</item>
+        <item name="android:colorButtonNormal">@color/iron</item>
         <item name="android:textAllCaps">false</item>
     </style>
 

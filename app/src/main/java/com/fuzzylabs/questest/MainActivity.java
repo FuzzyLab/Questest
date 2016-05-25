@@ -1,18 +1,14 @@
 package com.fuzzylabs.questest;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -23,12 +19,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -36,8 +30,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -64,13 +56,14 @@ public class MainActivity extends AppCompatActivity
     private static Button back;
     private static Button postSolutionBtn;
     private static EditText postSolution;
+    private static Button reportQuestionFab;
+    private static Button postQuestionFab;
 
     private static GetQuestionTask getQuestionTask = null;
     private static PostSolutionTask postSolutionTask = null;
     private static QuestestDB questestDB = null;
     private static User user;
     private static Question question;
-    private static UserAttempt userAttempt;
     private static String subject = null;
     private static List<Question> questions;
     private static int position;
@@ -147,10 +140,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        userAttempt = new UserAttempt();
-        userAttempt.setQuestionId(question.getId());
-        userAttempt.setUserId(user.getId());
-        userAttempt.setSubject(question.getSubject());
         Button button = (Button) view;
         next.setEnabled(true);
         option1.setEnabled(false);
@@ -158,7 +147,6 @@ public class MainActivity extends AppCompatActivity
         option3.setEnabled(false);
         option4.setEnabled(false);
         String answerSelected = (String) button.getText();
-        userAttempt.setMarked(answerSelected);
         question.setMarked(answerSelected);
         questestDB.open();
         questestDB.saveQuestion(question);
@@ -256,7 +244,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_english) {
             contentFlipper.setDisplayedChild(1);
             setTitle("English");
-            userAttempt = null;
             question = null;
             subject = "ENGLISH";
             fetchSavedQuestions();
@@ -265,7 +252,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_aptitude) {
             contentFlipper.setDisplayedChild(1);
             setTitle("Aptitude");
-            userAttempt = null;
             question = null;
             subject = "APTITUDE";
             fetchSavedQuestions();
@@ -274,7 +260,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gk) {
             contentFlipper.setDisplayedChild(1);
             setTitle("GK");
-            userAttempt = null;
             question = null;
             subject = "GK";
             fetchSavedQuestions();
@@ -283,7 +268,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_computer) {
             contentFlipper.setDisplayedChild(1);
             setTitle("Computer");
-            userAttempt = null;
             question = null;
             subject = "COMPUTER";
             fetchSavedQuestions();
@@ -292,7 +276,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_reasoning) {
             contentFlipper.setDisplayedChild(1);
             setTitle("Reasoning");
-            userAttempt = null;
             question = null;
             subject = "REASONING";
             fetchSavedQuestions();
@@ -301,7 +284,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_banking) {
             contentFlipper.setDisplayedChild(1);
             setTitle("Banking");
-            userAttempt = null;
             question = null;
             subject = "BANKING";
             fetchSavedQuestions();
@@ -352,14 +334,6 @@ public class MainActivity extends AppCompatActivity
             questions = questestDB.getQuestions(subject);
             questestDB.close();
             position = questions.size() - 1;
-            if(position > -1) {
-                question = questions.get(position);
-                userAttempt = new UserAttempt();
-                userAttempt.setQuestionId(question.getId());
-                userAttempt.setUserId(user.getId());
-                userAttempt.setSubject(question.getSubject());
-                userAttempt.setMarked(question.getMarked());
-            }
         }
     }
 
@@ -369,10 +343,6 @@ public class MainActivity extends AppCompatActivity
             progressBar.setVisibility(View.VISIBLE);
             GetQuestionRequest request = new GetQuestionRequest();
             request.setUser(user);
-            request.setUserAttempt(userAttempt);
-            Question question = new Question();
-            question.setSubject(subject);
-            request.setQuestion(question);
             String requestStr = new Gson().toJson(request);
             position++;
             getQuestionTask = new GetQuestionTask();
@@ -392,7 +362,7 @@ public class MainActivity extends AppCompatActivity
             String request = params[0];
             String resp = null;
             try {
-                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/getquestion", request);
+                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/getquestion/" + subject + "/" + position, request);
             } catch (Exception e) {
                 return null;
             }
