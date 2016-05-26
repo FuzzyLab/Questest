@@ -161,6 +161,12 @@ public class PostQuestionActivity extends AppCompatActivity {
             }
             Snackbar.make(postQuestionView, respMsg, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
+            postQuestion.setText("");
+            postAnswer.setText("");
+            postOptionA.setText("");
+            postOptionB.setText("");
+            postOptionC.setText("");
+            postSolution.setText("");
         }
 
         @Override

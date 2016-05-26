@@ -31,18 +31,6 @@
         <include android:id="@+id/layoutQuestion" layout="@layout/content_question" />
     </ViewFlipper>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="60dp"
-        android:layout_marginRight="16dp"
-        android:foregroundGravity="fill"
-        android:translationZ="15dp"
-        android:background="@color/primary_darker"
-        android:src="@mipmap/ic_add_black" />
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"

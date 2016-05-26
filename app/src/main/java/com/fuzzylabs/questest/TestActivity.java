@@ -37,6 +37,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -113,33 +114,21 @@ public class TestActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        ContextThemeWrapper themedContext = new ContextThemeWrapper( TestActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar );
-        AlertDialog.Builder builder = new AlertDialog.Builder(themedContext);
-        final AlertDialog ad = builder.create();
-        ad.setTitle("Finish Test?");
-        ad.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        ad.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        countDownTimer.cancel();
-                        dialog.dismiss();
-                        Intent intent = new Intent(getApplication(), ScoreActivity.class);
-                        intent.putExtra("subject", subject);
-                        intent.putExtra("total", String.valueOf(testCount));
-                        intent.putExtra("attempted", String.valueOf(attempted));
-                        intent.putExtra("correct", String.valueOf(correct));
-                        intent.putExtra("incorrect", String.valueOf(incorrect));
-                        intent.putExtra("score", correct+"/"+testCount);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-        ad.show();
+        Snackbar.make(contentFlipper, "Finish Test?", Snackbar.LENGTH_LONG)
+            .setAction("Yes", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplication(), ScoreActivity.class);
+                    intent.putExtra("subject", subject);
+                    intent.putExtra("total", String.valueOf(testCount));
+                    intent.putExtra("attempted", String.valueOf(attempted));
+                    intent.putExtra("correct", String.valueOf(correct));
+                    intent.putExtra("incorrect", String.valueOf(incorrect));
+                    intent.putExtra("score", correct+"/"+testCount);
+                    startActivity(intent);
+                    finish();
+                }
+            }).show();
     }
 
     public void finishTest(View view) {
@@ -335,10 +324,11 @@ public class TestActivity extends AppCompatActivity
     }
 
     private void blankScreen() {
+        FloatingActionButton raf = (FloatingActionButton) findViewById(R.id.reportQuestionFab);
+        raf.setVisibility(View.GONE);
+
         scrollView = (ScrollView) findViewById(R.id.questionScroll);
-
         questionNo = (TextView) findViewById(R.id.questionNo);
-
         questionView = (TextView) findViewById(R.id.question);
         questionView.setText("");
 
@@ -395,6 +385,8 @@ public class TestActivity extends AppCompatActivity
 
     public class MyCountDownTimer extends CountDownTimer {
 
+        DecimalFormat df = new DecimalFormat("00");
+
         public MyCountDownTimer(long startTime, long interval) {
             super(startTime, interval);
             setTime(startTime);
@@ -430,8 +422,8 @@ public class TestActivity extends AppCompatActivity
         }
 
         private void setTime(long milliSec) {
-            int min = (int) milliSec/60000;
-            int sec = (int) (milliSec/1000)%60;
+            String min = String.valueOf(milliSec/60000);
+            String sec = df.format((int)(milliSec/1000)%60);
             questionNo.setText(min+":"+sec);
         }
     }

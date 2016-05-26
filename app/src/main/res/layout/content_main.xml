@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -102,4 +102,15 @@
                 android:text="BANKING"/>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/postQuestionFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="10dp"
+        android:foregroundGravity="fill"
+        android:translationZ="15dp"
+        android:background="@color/primary_darker"
+        android:onClick="postQuestion"
+        android:src="@mipmap/ic_add_black" />
+</android.support.design.widget.CoordinatorLayout>

@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity
 
     private static GetQuestionTask getQuestionTask = null;
     private static PostSolutionTask postSolutionTask = null;
+    private static ReportQuestionTask reportQuestionTask = null;
     private static QuestestDB questestDB = null;
     private static User user;
     private static Question question;
@@ -106,15 +107,25 @@ public class MainActivity extends AppCompatActivity
         AdView mAdView = (AdView) findViewById(R.id.adQuestest);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplication(), PostQuestionActivity.class);
-                startActivity(intent);
+    public void postQuestion(View view) {
+        Intent intent = new Intent(getApplication(), PostQuestionActivity.class);
+        startActivity(intent);
+    }
+
+    public void report(View view) {
+        Snackbar.make(contentFlipper, "Report this question?", Snackbar.LENGTH_LONG)
+            .setAction("Yes", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                if(reportQuestionTask == null && question != null) {
+                    reportQuestionTask= new ReportQuestionTask();
+                    String requestStr = new Gson().toJson(user);
+                    reportQuestionTask.execute(requestStr);
+                }
             }
-        });
+        }).show();
     }
 
     @Override
@@ -341,9 +352,7 @@ public class MainActivity extends AppCompatActivity
         if(getQuestionTask == null) {
             progressBar = (ProgressBar) findViewById(R.id.progressBar);
             progressBar.setVisibility(View.VISIBLE);
-            GetQuestionRequest request = new GetQuestionRequest();
-            request.setUser(user);
-            String requestStr = new Gson().toJson(request);
+            String requestStr = new Gson().toJson(user);
             position++;
             getQuestionTask = new GetQuestionTask();
             getQuestionTask.execute(requestStr);
@@ -388,6 +397,44 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
+            setScreen();
+        }
+
+        @Override
+        protected void onCancelled() {
+            getQuestionTask = null;
+        }
+    }
+
+    public class ReportQuestionTask extends AsyncTask<String, Void, Response> {
+
+        @Override
+        protected Response doInBackground(String... params) {
+            RestConnection rest = new RestConnection();
+            String request = params[0];
+            String resp = null;
+            try {
+                resp =  rest.sendPostJson(getString(R.string.questest_home) + "/api/report/" + question.getId(), request);
+            } catch (Exception e) {
+                return null;
+            }
+            return new Gson().fromJson(resp, Response.class);
+        }
+
+        @Override
+        protected void onPostExecute(final Response response) {
+            reportQuestionTask = null;
+            int respCode = 1;
+            String respMsg = "";
+            try {
+                respCode = response.getRespCode();
+                respMsg = response.getRespMsg();
+            } catch (Exception ex) {
+                Snackbar.make(contentFlipper, "Internet Connection Error", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
             setScreen();
         }
 

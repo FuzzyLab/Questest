@@ -6,10 +6,10 @@ android {
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId 'com.fuzzylabs.questest'
-        minSdkVersion 19
+        minSdkVersion 17
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
     buildTypes {
         release {

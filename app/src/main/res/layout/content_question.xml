@@ -161,4 +161,15 @@
             </ViewFlipper>
         </RelativeLayout>
     </ScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/reportQuestionFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="10dp"
+        android:foregroundGravity="fill"
+        android:translationZ="15dp"
+        android:background="@color/primary_darker"
+        android:onClick="report"
+        android:src="@mipmap/ic_report" />
 </android.support.design.widget.CoordinatorLayout>
