@@ -60,6 +60,7 @@
                 android:layout_height="60dp"
                 android:paddingLeft="5dp"
                 android:inputType="textPassword"
+                android:imeOptions="actionDone"
                 android:textSize="16dp"
                 android:drawableLeft="@mipmap/ic_password"
                 android:drawablePadding="5dp"
@@ -78,9 +79,10 @@
             android:textColor="@drawable/appbutton"
             android:text="Login / Signup"/>
         <TextView
+            android:id="@+id/forgotPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="All the best!"/>
+            android:text="Forgot password?"/>
     </LinearLayout>
 </LinearLayout>

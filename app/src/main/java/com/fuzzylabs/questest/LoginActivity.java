@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -43,14 +45,13 @@ public class LoginActivity extends AppCompatActivity {
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-    private static final int REQUEST_READ_CONTACTS = 0;
-
     private UserLoginTask mAuthTask = null;
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mLoginFormView;
     private ProgressBar progressBar;
+    private TextView forgotPassword;
 
     private static QuestestDB questestDB = null;
 
@@ -65,6 +66,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+
+        forgotPassword = (TextView) findViewById(R.id.forgotPassword);
+        forgotPassword.setPaintFlags(forgotPassword.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        forgotPassword.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplication(), ForgotPasswordActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -150,7 +162,6 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Response response) {
             mAuthTask = null;
-            showProgress(false);
             int respCode = 1;
             String respMsg = "";
             try {
@@ -182,6 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                 mPasswordView.setText("");
                 mPasswordView.requestFocus();
             }
+            showProgress(false);
         }
 
         @Override

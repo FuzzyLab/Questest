@@ -93,7 +93,6 @@
                 android:layout_weight="3"
                 android:gravity="left|center_vertical"
                 android:imeOptions="actionNext"
-                android:singleLine="true"
                 android:text="Name"
                 android:textSize="16dp"/>
         </LinearLayout>
@@ -116,7 +115,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="left|center_vertical"
-                android:maxLines="1"
                 android:text="25"
                 android:textSize="16dp"
                 android:inputType="number"/>

@@ -118,6 +118,7 @@ public class TestActivity extends AppCompatActivity
             .setAction("Yes", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    countDownTimer.cancel();
                     Intent intent = new Intent(getApplication(), ScoreActivity.class);
                     intent.putExtra("subject", subject);
                     intent.putExtra("total", String.valueOf(testCount));
