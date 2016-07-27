@@ -1,6 +1,7 @@
 package com.fuzzylabs.questest;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ import android.widget.ViewFlipper;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.formats.NativeAd;
 import com.google.gson.Gson;
 
 import java.util.HashSet;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     private static ViewFlipper solutionFlipper;
     private static TextView questionNo;
     private static TextView questionView;
+    private static ImageView imageView;
     private static Button option1;
     private static Button option2;
     private static Button option3;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     private static Button postQuestionFab;
 
     private static GetQuestionTask getQuestionTask = null;
+    private static GetImageTask getImageTask = null;
     private static PostSolutionTask postSolutionTask = null;
     private static ReportQuestionTask reportQuestionTask = null;
     private static QuestestDB questestDB = null;
@@ -406,6 +411,34 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public class GetImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            RestConnection rest = new RestConnection();
+            String quesid = params[0];
+            Bitmap image = null;
+            try {
+                image =  rest.getImage(getString(R.string.questest_home) + "/api/getimage/" + quesid);
+            } catch (Exception e) {
+                return null;
+            }
+            return image;
+        }
+
+        @Override
+        protected void onPostExecute(final Bitmap image) {
+            getImageTask = null;
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageBitmap(image);
+        }
+
+        @Override
+        protected void onCancelled() {
+            getImageTask = null;
+        }
+    }
+
     public class ReportQuestionTask extends AsyncTask<String, Void, Response> {
 
         @Override
@@ -487,6 +520,10 @@ public class MainActivity extends AppCompatActivity
         blankScreen();
         if(question != null) {
             questionNo.setText("Question# " + (position+1));
+            if(question.isImage() && getImageTask == null) {
+                getImageTask = new GetImageTask();
+                getImageTask.execute(question.getId());
+            }
             Set<Integer> set = new HashSet<Integer>();
             boolean isDone = false;
             questionView.setText(question.getQuestion());
@@ -603,6 +640,9 @@ public class MainActivity extends AppCompatActivity
 
         questionView = (TextView) findViewById(R.id.question);
         questionView.setText("");
+
+        imageView = (ImageView) findViewById(R.id.image);
+        imageView.setVisibility(View.GONE);
 
         option1 = (Button) findViewById(R.id.option1);
         option1.setText("");

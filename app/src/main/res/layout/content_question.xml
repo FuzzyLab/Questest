@@ -74,6 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:background="@drawable/quizborders"
+                android:orientation="vertical"
                 android:layout_below="@id/progressBarView">
                 <TextView
                     android:id="@+id/question"
@@ -87,11 +88,23 @@
                     android:text="Question?"/>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/image_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@id/question_layout">
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"/>
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/options_layout"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="5dp"
-                android:layout_below="@id/question_layout"
+                android:layout_below="@id/image_layout"
                 android:orientation="vertical">
                 <Button
                     android:id="@+id/option1"

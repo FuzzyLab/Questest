@@ -12,6 +12,15 @@ public class Question {
 	private String optionC;
 	private String solution;
 	private String marked;
+	private boolean image;
+
+	public boolean isImage() {
+		return image;
+	}
+
+	public void setImage(boolean image) {
+		this.image = image;
+	}
 
 	public String getId() {
 		return id;

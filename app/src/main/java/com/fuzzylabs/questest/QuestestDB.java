@@ -28,11 +28,12 @@ public class QuestestDB {
     public static final String OPTIONC = "optionC";
     public static final String SOLUTION = "solution";
     public static final String MARKED = "marked";
+    public static final String IMAGE = "image";
 
     private static final String DATABASE_NAME = "Questest";
     public static final String USER_TABLE = "User";
     public static final String QUESTION_TABLE = "Question";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private DbHelper ourHelper;
     private final Context ourContext;
@@ -67,14 +68,20 @@ public class QuestestDB {
                     + OPTIONC + " TEXT NOT NULL, "
                     + SOLUTION + " TEXT NOT NULL, "
                     + MARKED + " TEXT NOT NULL, "
+                    + IMAGE + " TEXT, "
                     + "UNIQUE (" + ID + ") ON CONFLICT REPLACE);");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + QUESTION_TABLE);
-            onCreate(db);
+            if (newVersion < 2) {
+                db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE);
+                db.execSQL("DROP TABLE IF EXISTS " + QUESTION_TABLE);
+                onCreate(db);
+            } else if(newVersion < 3) {
+                db.execSQL("ALTER TABLE " + QUESTION_TABLE + " ADD COLUMN "+IMAGE + " TEXT");
+                db.execSQL("UPDATE " + QUESTION_TABLE + " SET "+IMAGE+" = '0'");
+            }
         }
     }
 
@@ -139,11 +146,12 @@ public class QuestestDB {
         cv.put(OPTIONC, question.getOptionC());
         cv.put(SOLUTION, question.getSolution());
         cv.put(MARKED, question.getMarked());
+        cv.put(IMAGE, question.isImage()?"1":"0");
         return ourDatabase.insert(QUESTION_TABLE, null, cv);
     }
 
     public List<Question> getQuestions(String subject) {
-        String[] columns = new String[] { KEY_ROWID,ID,SUBJECT,QUESTION,ANSWER,OPTIONA,OPTIONB,OPTIONC,SOLUTION,MARKED };
+        String[] columns = new String[] { KEY_ROWID,ID,SUBJECT,QUESTION,ANSWER,OPTIONA,OPTIONB,OPTIONC,SOLUTION,MARKED,IMAGE };
         Cursor c = ourDatabase.query(QUESTION_TABLE, columns, SUBJECT+" like ?", new String[]{subject}, null,
                 null, null);
         List<Question> questions = new ArrayList<Question>();
@@ -159,6 +167,7 @@ public class QuestestDB {
             question.setOptionC(c.getString(7));
             question.setSolution(c.getString(8));
             question.setMarked(c.getString(9));
+            question.setImage("1".equals(c.getString(10)));
             questions.add(question);
             c.moveToNext();
         }

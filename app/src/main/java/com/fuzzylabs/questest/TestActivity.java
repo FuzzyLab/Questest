@@ -2,6 +2,7 @@ package com.fuzzylabs.questest;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -51,6 +53,7 @@ public class TestActivity extends AppCompatActivity
     private static ViewFlipper contentFlipper;
     private static TextView questionNo;
     private static TextView questionView;
+    private static ImageView imageView;
     private static Button option1;
     private static Button option2;
     private static Button option3;
@@ -62,6 +65,7 @@ public class TestActivity extends AppCompatActivity
     private static Button back;
 
     private static GetTestTask getTestTask = null;
+    private static GetImageTask getImageTask = null;
     private static QuestestDB questestDB = null;
     private static User user;
     private static Question question;
@@ -239,9 +243,41 @@ public class TestActivity extends AppCompatActivity
         }
     }
 
+    public class GetImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            RestConnection rest = new RestConnection();
+            String quesid = params[0];
+            Bitmap image = null;
+            try {
+                image =  rest.getImage(getString(R.string.questest_home) + "/api/getimage/" + quesid);
+            } catch (Exception e) {
+                return null;
+            }
+            return image;
+        }
+
+        @Override
+        protected void onPostExecute(final Bitmap image) {
+            getImageTask = null;
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageBitmap(image);
+        }
+
+        @Override
+        protected void onCancelled() {
+            getImageTask = null;
+        }
+    }
+
     private void setScreen() {
         blankScreen();
         if(question != null) {
+            if(question.isImage() && getImageTask == null) {
+                getImageTask = new GetImageTask();
+                getImageTask.execute(question.getId());
+            }
             Set<Integer> set = new HashSet<Integer>();
             boolean isDone = false;
             questionView.setText(question.getQuestion());
@@ -332,6 +368,9 @@ public class TestActivity extends AppCompatActivity
         questionNo = (TextView) findViewById(R.id.questionNo);
         questionView = (TextView) findViewById(R.id.question);
         questionView.setText("");
+
+        imageView = (ImageView) findViewById(R.id.image);
+        imageView.setVisibility(View.GONE);
 
         option1 = (Button) findViewById(R.id.option1);
         option1.setText("");

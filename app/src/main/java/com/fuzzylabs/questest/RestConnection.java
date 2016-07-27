@@ -16,9 +16,8 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class RestConnection {
 
@@ -33,6 +32,11 @@ public class RestConnection {
 	public String sendPostJson(String url, String data)
 			throws IOException {
 		return createHttpConnectionJson(new URL(url), data);
+	}
+
+	public Bitmap getImage(String url)
+			throws IOException {
+		return createHttpConnectionBitmap(new URL(url));
 	}
 
 	private String createHttpConnectionJson(URL url, String data)
@@ -89,6 +93,23 @@ public class RestConnection {
 					output.close();
 			}
 			String rBody = getResponseBody(httpConnection.getInputStream());
+			return rBody;
+		} catch (IOException e) {
+		}
+		return null;
+	}
+
+	private Bitmap createHttpConnectionBitmap(URL url)
+			throws IOException {
+		try {
+			HttpURLConnection httpConnection = (HttpURLConnection) url
+					.openConnection();
+			httpConnection.setRequestMethod("GET");
+			httpConnection.setUseCaches(false);
+			httpConnection.setAllowUserInteraction(false);
+			httpConnection.setConnectTimeout(connectTimeout);
+			httpConnection.setReadTimeout(readTimeout);
+			Bitmap rBody = BitmapFactory.decodeStream(httpConnection.getInputStream());
 			return rBody;
 		} catch (IOException e) {
 		}
