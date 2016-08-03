@@ -34,6 +34,19 @@ public class RestConnection {
 		return createHttpConnectionJson(new URL(url), data);
 	}
 
+	public String getJson(String urlStr) {
+		try {
+			URL url = new URL(urlStr);
+			HttpURLConnection httpConnection = (HttpURLConnection) url
+					.openConnection();
+			httpConnection.setRequestMethod("GET");
+			String rBody = getResponseBody(httpConnection.getInputStream());
+			return rBody;
+		} catch (IOException e) {
+		}
+		return null;
+	}
+
 	public Bitmap getImage(String url)
 			throws IOException {
 		return createHttpConnectionBitmap(new URL(url));

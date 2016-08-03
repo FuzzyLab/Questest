@@ -27,8 +27,9 @@
         android:layout_height="fill_parent"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="55dp">
-        <include android:id="@+id/layoutMain" layout="@layout/content_main" />
+        <include android:id="@+id/layoutNews" layout="@layout/content_news" />
         <include android:id="@+id/layoutQuestion" layout="@layout/content_question" />
+        <include android:id="@+id/layoutMain" layout="@layout/content_main" />
     </ViewFlipper>
 
     <LinearLayout

@@ -51,6 +51,7 @@ public class TestActivity extends AppCompatActivity
         implements View.OnClickListener, View.OnTouchListener {
 
     private static ViewFlipper contentFlipper;
+    private static ViewFlipper solutionFlipper;
     private static TextView questionNo;
     private static TextView questionView;
     private static ImageView imageView;
@@ -59,7 +60,6 @@ public class TestActivity extends AppCompatActivity
     private static Button option3;
     private static Button option4;
     private static TextView solutionView;
-    private static ScrollView scrollView;
 
     private static Button next;
     private static Button back;
@@ -165,6 +165,9 @@ public class TestActivity extends AppCompatActivity
             else if (option4.getText().equals(question.getAnswer()))
                 option4.setBackgroundResource(R.drawable.bgreen);
         }
+        solutionFlipper.setDisplayedChild(0);
+        solutionFlipper.setVisibility(View.VISIBLE);
+        solutionView = (TextView) findViewById(R.id.solution);
         solutionView.setText(question.getSolution());
     }
 
@@ -331,6 +334,9 @@ public class TestActivity extends AppCompatActivity
                 button.setText(question.getAnswer());
                 if(!TextUtils.isEmpty(question.getMarked())) {
                     button.setBackgroundResource(R.drawable.bgreen);
+                    solutionFlipper.setDisplayedChild(0);
+                    solutionFlipper.setVisibility(View.VISIBLE);
+                    solutionView = (TextView) findViewById(R.id.solution);
                     solutionView.setText(question.getSolution());
                 }
                 break;
@@ -364,7 +370,6 @@ public class TestActivity extends AppCompatActivity
         FloatingActionButton raf = (FloatingActionButton) findViewById(R.id.reportQuestionFab);
         raf.setVisibility(View.GONE);
 
-        scrollView = (ScrollView) findViewById(R.id.questionScroll);
         questionNo = (TextView) findViewById(R.id.questionNo);
         questionView = (TextView) findViewById(R.id.question);
         questionView.setText("");
@@ -396,9 +401,6 @@ public class TestActivity extends AppCompatActivity
         option4.setBackgroundResource(R.drawable.bnormal);
         option4.setEnabled(false);
 
-        solutionView = (TextView) findViewById(R.id.solution);
-        solutionView.setText("");
-
         next = (Button) findViewById(R.id.next);
         next.setEnabled(false);
         back = (Button) findViewById(R.id.back);
@@ -406,21 +408,8 @@ public class TestActivity extends AppCompatActivity
         if (position > 0) {
             back.setEnabled(true);
         }
-        questionView.setMovementMethod(new ScrollingMovementMethod());
-        scrollView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                questionView.getParent().requestDisallowInterceptTouchEvent(false);
-                return false;
-            }
-        });
-        questionView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                questionView.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
+        solutionFlipper = (ViewFlipper)findViewById(R.id.solution_flipper);
+        solutionFlipper.setVisibility(View.GONE);
     }
 
     public class MyCountDownTimer extends CountDownTimer {

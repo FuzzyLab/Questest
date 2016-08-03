@@ -9,6 +9,7 @@
         completions."
     </string>
     <string name="questest_home">http://questest-fuzzyinsurance.rhcloud.com</string>
+    <string name="feed_home">https://ajax.googleapis.com/ajax/services/feed/find?v=1.0</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_logout">Logout</string>

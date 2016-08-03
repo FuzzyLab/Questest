@@ -1,15 +1,14 @@
 package com.fuzzylabs.questest;
 
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,19 +19,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.formats.NativeAd;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -53,26 +58,27 @@ public class MainActivity extends AppCompatActivity
     private static TextView solutionView;
     private static TextView userName;
     private static TextView userEmail;
-    private static ScrollView scrollView;
     private static ProgressBar progressBar;
+    private static ListView newsList;
+    private static Spinner newsTopic;
 
     private static Button next;
     private static Button back;
     private static Button postSolutionBtn;
     private static EditText postSolution;
-    private static Button reportQuestionFab;
-    private static Button postQuestionFab;
 
     private static GetQuestionTask getQuestionTask = null;
     private static GetImageTask getImageTask = null;
     private static PostSolutionTask postSolutionTask = null;
     private static ReportQuestionTask reportQuestionTask = null;
+    private static GetNewsTask getNewsTask;
     private static QuestestDB questestDB = null;
     private static User user;
     private static Question question;
     private static String subject = null;
     private static List<Question> questions;
     private static int position;
+    private static List<String> newsLinks;
 
     private static Random random = new Random();
 
@@ -95,7 +101,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        setTitle("Questest");
+        navigationView.getMenu().getItem(0).setChecked(true);
+        onNavigationItemSelected(navigationView.getMenu().getItem(0));
 
         questestDB = new QuestestDB(getApplicationContext());
         questestDB.open();
@@ -112,25 +119,6 @@ public class MainActivity extends AppCompatActivity
         AdView mAdView = (AdView) findViewById(R.id.adQuestest);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-    }
-
-    public void postQuestion(View view) {
-        Intent intent = new Intent(getApplication(), PostQuestionActivity.class);
-        startActivity(intent);
-    }
-
-    public void report(View view) {
-        Snackbar.make(contentFlipper, "Report this question?", Snackbar.LENGTH_LONG)
-            .setAction("Yes", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                if(reportQuestionTask == null && question != null) {
-                    reportQuestionTask= new ReportQuestionTask();
-                    String requestStr = new Gson().toJson(user);
-                    reportQuestionTask.execute(requestStr);
-                }
-            }
-        }).show();
     }
 
     @Override
@@ -237,16 +225,9 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void viewAccount(View view) {
-        Intent intent = new Intent(getApplication(), AccountActivity.class);
-        startActivity(intent);
-    }
-
-    public void takeTest(View view) {
-        Intent intent = new Intent(getApplication(), TestActivity.class);
-        Button btn = (Button) view;
-        intent.putExtra("subject", btn.getText().toString().trim());
-        startActivity(intent);
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -254,9 +235,33 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            contentFlipper.setDisplayedChild(0);
+            contentFlipper.setDisplayedChild(2);
             subject = null;
             setTitle("Questest");
+        } else if (id == R.id.nav_news) {
+            contentFlipper.setDisplayedChild(0);
+            subject = null;
+            setTitle("News");
+            newsTopic = (Spinner) findViewById(R.id.news_topics);
+            String[] topics = {"IBPS CLERK", "IBPS PO", "SBI CLERK", "SBI PO", "RRB NTPC"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+                    android.R.layout.simple_list_item_1, android.R.id.text1, topics);
+            newsTopic.setAdapter(adapter);
+            newsTopic.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if(getNewsTask == null) {
+                        getNewsTask = new GetNewsTask();
+                        getNewsTask.execute((String)newsTopic.getSelectedItem());
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+            if(getNewsTask == null) {
+                getNewsTask = new GetNewsTask();
+                getNewsTask.execute((String)newsTopic.getSelectedItem());
+            }
         } else if (id == R.id.nav_english) {
             contentFlipper.setDisplayedChild(1);
             setTitle("English");
@@ -328,6 +333,37 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void postQuestion(View view) {
+        Intent intent = new Intent(getApplication(), PostQuestionActivity.class);
+        startActivity(intent);
+    }
+
+    public void report(View view) {
+        Snackbar.make(contentFlipper, "Report this question?", Snackbar.LENGTH_LONG)
+                .setAction("Yes", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(reportQuestionTask == null && question != null) {
+                            reportQuestionTask= new ReportQuestionTask();
+                            String requestStr = new Gson().toJson(user);
+                            reportQuestionTask.execute(requestStr);
+                        }
+                    }
+                }).show();
+    }
+
+    public void viewAccount(View view) {
+        Intent intent = new Intent(getApplication(), AccountActivity.class);
+        startActivity(intent);
+    }
+
+    public void takeTest(View view) {
+        Intent intent = new Intent(getApplication(), TestActivity.class);
+        Button btn = (Button) view;
+        intent.putExtra("subject", btn.getText().toString().trim());
+        startActivity(intent);
+    }
+
     public void nextClick(View view) {
         if(position == questions.size() - 1) {
             fetchQuestion();
@@ -362,10 +398,6 @@ public class MainActivity extends AppCompatActivity
             getQuestionTask = new GetQuestionTask();
             getQuestionTask.execute(requestStr);
         }
-    }
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return false;
     }
 
     public class GetQuestionTask extends AsyncTask<String, Void, Response> {
@@ -402,6 +434,7 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(contentFlipper, respMsg, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
+            progressBar.setVisibility(View.GONE);
             setScreen();
         }
 
@@ -431,11 +464,62 @@ public class MainActivity extends AppCompatActivity
             getImageTask = null;
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageBitmap(image);
+            progressBar.setVisibility(View.GONE);
         }
 
         @Override
         protected void onCancelled() {
             getImageTask = null;
+        }
+    }
+
+    public class GetNewsTask extends AsyncTask<String, Void, GoogleResponse> {
+
+        @Override
+        protected GoogleResponse doInBackground(String... params) {
+            RestConnection rest = new RestConnection();
+            String topic = params[0].replace(" ", "+");
+            GoogleResponse response = null;
+            try {
+                String resp = rest.getJson(getString(R.string.feed_home) + "&q=" + topic);
+                response =  new Gson().fromJson(resp, GoogleResponse.class);
+            } catch (Exception e) {
+                return null;
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(final GoogleResponse response){
+            getNewsTask = null;
+            newsLinks = new ArrayList<String>();
+            Entry[] entries = response.getResponseData().getEntries();
+            ArrayList<String> news = new ArrayList<String>();
+            for(int x = 0; x < entries.length; x++){
+                if(entries[x].getTitle().contains("GradeStack")) {
+                    continue;
+                }
+                news.add(entries[x].getTitle().replaceAll("\\<b.*?b\\>", ""));
+                newsLinks.add(entries[x].getLink());
+            }
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+                    android.R.layout.simple_list_item_1, android.R.id.text1, news);
+            newsList = (ListView) findViewById(R.id.news_list);
+            newsList.setAdapter(adapter);
+            newsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent ni = new Intent(getApplication(), NewsActivity.class);
+                    ni.putExtra("url", newsLinks.get(position));
+                    ni.putExtra("title", (String) parent.getItemAtPosition(position));
+                    startActivity(ni);
+                }
+            });
+        }
+
+        @Override
+        protected void onCancelled() {
+            getNewsTask = null;
         }
     }
 
@@ -496,10 +580,8 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(final Response response) {
             progressBar.setVisibility(View.GONE);
             postSolutionTask = null;
-            int respCode = 1;
             String respMsg = "";
             try {
-                respCode = response.getRespCode();
                 respMsg = response.getRespMsg();
             } catch (Exception ex) {
                 Snackbar.make(contentFlipper, "Internet Connection Error", Snackbar.LENGTH_LONG)
@@ -521,6 +603,7 @@ public class MainActivity extends AppCompatActivity
         if(question != null) {
             questionNo.setText("Question# " + (position+1));
             if(question.isImage() && getImageTask == null) {
+                progressBar.setVisibility(View.VISIBLE);
                 getImageTask = new GetImageTask();
                 getImageTask.execute(question.getId());
             }
@@ -595,7 +678,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-        progressBar.setVisibility(View.GONE);
     }
 
     private void setButton(Button button, int option) {
@@ -627,14 +709,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return super.onKeyUp(keyCode, event);
-    }
-
     private void blankScreen() {
-        scrollView = (ScrollView) findViewById(R.id.questionScroll);
-
         questionNo = (TextView) findViewById(R.id.questionNo);
         questionNo.setText("Question#");
 
@@ -678,21 +753,6 @@ public class MainActivity extends AppCompatActivity
         if (position > 0) {
             back.setEnabled(true);
         }
-        questionView.setMovementMethod(new ScrollingMovementMethod());
-        scrollView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                questionView.getParent().requestDisallowInterceptTouchEvent(false);
-                return false;
-            }
-        });
-        questionView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                questionView.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
     }
 
 }
