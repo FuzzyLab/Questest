@@ -1,6 +1,11 @@
 package com.fuzzylabs.questest;
 
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -9,6 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -44,7 +52,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnTouchListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnClickListener, View.OnTouchListener {
 
     private static ViewFlipper contentFlipper;
     private static ViewFlipper solutionFlipper;
@@ -59,7 +67,6 @@ public class MainActivity extends AppCompatActivity
     private static TextView userName;
     private static TextView userEmail;
     private static ProgressBar progressBar;
-    private static ListView newsList;
     private static Spinner newsTopic;
 
     private static Button next;
@@ -78,7 +85,6 @@ public class MainActivity extends AppCompatActivity
     private static String subject = null;
     private static List<Question> questions;
     private static int position;
-    private static List<String> newsLinks;
 
     private static Random random = new Random();
 
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity
             solutionFlipper.setDisplayedChild(1);
             postSolution = (EditText) findViewById(R.id.post_solution);
             postSolutionBtn = (Button) findViewById(R.id.post_solution_btn);
-            postSolutionBtn.setOnClickListener(new View.OnClickListener() {
+            postSolutionBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String solution = postSolution.getText().toString().trim();
@@ -340,7 +346,7 @@ public class MainActivity extends AppCompatActivity
 
     public void report(View view) {
         Snackbar.make(contentFlipper, "Report this question?", Snackbar.LENGTH_LONG)
-                .setAction("Yes", new View.OnClickListener() {
+                .setAction("Yes", new OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if(reportQuestionTask == null && question != null) {
@@ -492,34 +498,53 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(final GoogleResponse response){
             getNewsTask = null;
-            newsLinks = new ArrayList<String>();
             Entry[] entries = response.getResponseData().getEntries();
-            ArrayList<String> news = new ArrayList<String>();
+            ArrayList<News> newses = new ArrayList<News>();
             for(int x = 0; x < entries.length; x++){
                 if(entries[x].getTitle().contains("GradeStack")) {
                     continue;
                 }
-                news.add(entries[x].getTitle().replaceAll("\\<b.*?b\\>", ""));
-                newsLinks.add(entries[x].getLink());
+                News ne = new News();
+                ne.setTitle(entries[x].getTitle().replaceAll("\\<.*?\\>", ""));
+                ne.setLink(entries[x].getLink());
+                newses.add(ne);
             }
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
-                    android.R.layout.simple_list_item_1, android.R.id.text1, news);
-            newsList = (ListView) findViewById(R.id.news_list);
-            newsList.setAdapter(adapter);
-            newsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent ni = new Intent(getApplication(), NewsActivity.class);
-                    ni.putExtra("url", newsLinks.get(position));
-                    ni.putExtra("title", (String) parent.getItemAtPosition(position));
-                    startActivity(ni);
-                }
-            });
+            NewsAdapter adapter = new NewsAdapter(getApplicationContext(), newses);
+            ListView listView = (ListView) findViewById(R.id.news_list);
+            listView.setAdapter(adapter);
         }
 
         @Override
         protected void onCancelled() {
             getNewsTask = null;
+        }
+    }
+
+    public class NewsAdapter extends ArrayAdapter<News> {
+
+        public NewsAdapter(Context context, ArrayList<News> news) {
+            super(context, 0, news);
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+            final News news = getItem(position);
+            if (view == null) {
+                view = LayoutInflater.from(getContext()).inflate(R.layout.news_item, parent, false);
+            }
+            TextView newsTitle = (TextView) view.findViewById(R.id.newsTitle);
+            newsTitle.setText(news.getTitle());
+            Button knowMoreBtn = (Button) view.findViewById(R.id.knowMoreBtn);
+            knowMoreBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    Intent ni = new Intent(getApplication(), NewsActivity.class);
+                    ni.putExtra("url", news.getLink());
+                    ni.putExtra("title", news.getTitle());
+                    startActivity(ni);
+                }
+            });
+            return view;
         }
     }
 
@@ -649,7 +674,7 @@ public class MainActivity extends AppCompatActivity
                     solutionFlipper.setDisplayedChild(1);
                     postSolution = (EditText) findViewById(R.id.post_solution);
                     postSolutionBtn = (Button) findViewById(R.id.post_solution_btn);
-                    postSolutionBtn.setOnClickListener(new View.OnClickListener() {
+                    postSolutionBtn.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             String solution = postSolution.getText().toString().trim();
