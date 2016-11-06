@@ -15,7 +15,8 @@
             android:id="@+id/news_topics"
             android:layout_width="fill_parent"
             android:background="@color/primary_dark"
-            android:layout_height="wrap_content"></Spinner>
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"></Spinner>
         <ListView
             android:id="@+id/news_list"
             android:layout_width="match_parent"

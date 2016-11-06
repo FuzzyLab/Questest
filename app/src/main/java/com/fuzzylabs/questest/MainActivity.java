@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -257,16 +258,20 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if(getNewsTask == null) {
-                        getNewsTask = new GetNewsTask();
-                        getNewsTask.execute((String)newsTopic.getSelectedItem());
+                        if(isNetworkConnected()) {
+                            getNewsTask = new GetNewsTask();
+                            getNewsTask.execute((String) newsTopic.getSelectedItem());
+                        }
                     }
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
             if(getNewsTask == null) {
-                getNewsTask = new GetNewsTask();
-                getNewsTask.execute((String)newsTopic.getSelectedItem());
+                if(isNetworkConnected()) {
+                    getNewsTask = new GetNewsTask();
+                    getNewsTask.execute((String) newsTopic.getSelectedItem());
+                }
             }
         } else if (id == R.id.nav_english) {
             contentFlipper.setDisplayedChild(1);
@@ -339,6 +344,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
+
     public void postQuestion(View view) {
         Intent intent = new Intent(getApplication(), PostQuestionActivity.class);
         startActivity(intent);
@@ -372,6 +382,7 @@ public class MainActivity extends AppCompatActivity
 
     public void nextClick(View view) {
         if(position == questions.size() - 1) {
+            next.setEnabled(false);
             fetchQuestion();
         } else {
             position++;
@@ -392,6 +403,8 @@ public class MainActivity extends AppCompatActivity
             questions = questestDB.getQuestions(subject);
             questestDB.close();
             position = questions.size() - 1;
+        } else {
+            next.setEnabled(true);
         }
     }
 
@@ -471,11 +484,23 @@ public class MainActivity extends AppCompatActivity
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageBitmap(image);
             progressBar.setVisibility(View.GONE);
+            if(!TextUtils.isEmpty(question.getMarked())) {
+                next.setEnabled(true);
+            }
+            if (position > 0) {
+                back.setEnabled(true);
+            }
         }
 
         @Override
         protected void onCancelled() {
             getImageTask = null;
+            if(!TextUtils.isEmpty(question.getMarked())) {
+                next.setEnabled(true);
+            }
+            if (position > 0) {
+                back.setEnabled(true);
+            }
         }
     }
 
@@ -628,9 +653,13 @@ public class MainActivity extends AppCompatActivity
         if(question != null) {
             questionNo.setText("Question# " + (position+1));
             if(question.isImage() && getImageTask == null) {
+                next.setEnabled(false);
+                back.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
                 getImageTask = new GetImageTask();
                 getImageTask.execute(question.getId());
+            } else if(!TextUtils.isEmpty(question.getMarked())){
+                next.setEnabled(true);
             }
             Set<Integer> set = new HashSet<Integer>();
             boolean isDone = false;
@@ -668,7 +697,6 @@ public class MainActivity extends AppCompatActivity
                 option2.setEnabled(false);
                 option3.setEnabled(false);
                 option4.setEnabled(false);
-                next.setEnabled(true);
                 solutionFlipper.setVisibility(View.VISIBLE);
                 if(TextUtils.isEmpty(question.getSolution())) {
                     solutionFlipper.setDisplayedChild(1);

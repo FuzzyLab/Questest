@@ -56,6 +56,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:gravity="center_vertical"
+                android:background="#80000000"
                 android:paddingLeft="10dp"
                 android:text="Know More.."
                 android:textSize="11sp" />

@@ -266,11 +266,27 @@ public class TestActivity extends AppCompatActivity
             getImageTask = null;
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageBitmap(image);
+            next.setEnabled(true);
+            back.setEnabled(true);
+            if(position < 1) {
+                back.setEnabled(false);
+            }
+            if(position >= questions.size()-1) {
+                next.setEnabled(false);
+            }
         }
 
         @Override
         protected void onCancelled() {
             getImageTask = null;
+            next.setEnabled(true);
+            back.setEnabled(true);
+            if(position < 1) {
+                back.setEnabled(false);
+            }
+            if(position >= questions.size()-1) {
+                next.setEnabled(false);
+            }
         }
     }
 
@@ -278,8 +294,19 @@ public class TestActivity extends AppCompatActivity
         blankScreen();
         if(question != null) {
             if(question.isImage() && getImageTask == null) {
+                next.setEnabled(false);
+                back.setEnabled(false);
                 getImageTask = new GetImageTask();
                 getImageTask.execute(question.getId());
+            } else {
+                back.setEnabled(true);
+                next.setEnabled(true);
+                if(position < 1) {
+                    back.setEnabled(false);
+                }
+                if(position >= questions.size()-1) {
+                    next.setEnabled(false);
+                }
             }
             Set<Integer> set = new HashSet<Integer>();
             boolean isDone = false;
@@ -316,14 +343,6 @@ public class TestActivity extends AppCompatActivity
                 option2.setEnabled(false);
                 option3.setEnabled(false);
                 option4.setEnabled(false);
-            }
-            back.setEnabled(true);
-            next.setEnabled(true);
-            if(position < 1) {
-                back.setEnabled(false);
-            }
-            if(position >= questions.size()-1) {
-                next.setEnabled(false);
             }
         }
     }
